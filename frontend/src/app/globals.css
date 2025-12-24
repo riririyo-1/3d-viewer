@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-blob-blue: theme("colors.blue.100");
+  --color-blob-indigo: theme("colors.indigo.100");
+  --color-blob-slate: theme("colors.slate.200");
+}
+
+@layer utilities {
+  .animate-blob {
+    animation: blob 7s infinite alternate ease-in-out;
+  }
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+body {
+  background-color: #f3f4f6;
+  color: #0f172a;
+}

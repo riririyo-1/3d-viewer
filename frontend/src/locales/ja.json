@@ -1,0 +1,39 @@
+{
+  "common": {
+    "manageAssets": "Manage Assets",
+    "openCollection": "コレクションを開く",
+    "importAsset": "アセットをインポート",
+    "recentlyOpened": "最近開いた項目",
+    "noHistory": "履歴なし",
+    "studio": "Studio",
+    "view": "View",
+    "account": "アカウント",
+    "language": "言語",
+    "settings": "設定",
+    "logout": "ログアウト"
+  },
+  "home": {
+    "title1": "Visionary",
+    "title2": "Geometry.",
+    "subtitle": "論理から美学へ。3Dアセットに新たな命と深い静寂をもたらすミニマリスト空間。",
+    "studioPerspective": "Studio Perspective",
+    "myCollection": "マイコレクション",
+    "personalAssetLibrary": "個人アセットライブラリ",
+    "exploreCollection": "コレクションを見る",
+    "cloudNode": "クラウドノード",
+    "multiDeviceSync": "マルチデバイス同期",
+    "updatePending": "アップデート待機中"
+  },
+  "collection": {
+    "title": "コレクション",
+    "subtitle": "デジタル幾何学アーカイブ",
+    "newImport": "新規インポート",
+    "inventoryEmpty": "在庫なし",
+    "processing": "処理中..."
+  },
+  "viewer": {
+    "wireframe": "ワイヤーフレーム",
+    "grid": "グリッド",
+    "spin": "回転"
+  }
+}

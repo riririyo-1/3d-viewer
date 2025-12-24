@@ -1,0 +1,39 @@
+{
+  "common": {
+    "manageAssets": "Manage Assets",
+    "openCollection": "Open Collection",
+    "importAsset": "Import Asset",
+    "recentlyOpened": "Recently Opened",
+    "noHistory": "No history",
+    "studio": "Studio",
+    "view": "View",
+    "account": "Account",
+    "language": "Language",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "home": {
+    "title1": "Visionary",
+    "title2": "Geometry.",
+    "subtitle": "Logic to Aesthetics. A minimalist space bringing new life and profound serenity to your 3D assets.",
+    "studioPerspective": "Studio Perspective",
+    "myCollection": "My Collection",
+    "personalAssetLibrary": "Personal Asset Library",
+    "exploreCollection": "Explore Collection",
+    "cloudNode": "Cloud Node",
+    "multiDeviceSync": "Multi-Device Sync",
+    "updatePending": "Update Pending"
+  },
+  "collection": {
+    "title": "Collections",
+    "subtitle": "Digital Geometry Archives",
+    "newImport": "New Import",
+    "inventoryEmpty": "Inventory Empty",
+    "processing": "Processing..."
+  },
+  "viewer": {
+    "wireframe": "WIREFRAME",
+    "grid": "GRID",
+    "spin": "SPIN"
+  }
+}
