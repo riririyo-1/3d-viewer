@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Maximize, Grid3X3, Rotate3d, Layers } from "lucide-react";
+import { Maximize, Grid3X3, Rotate3d } from "lucide-react";
 import { useAppStore } from "@/lib/store";
 import { ViewerCanvas } from "@/components/three/ViewerCanvas";
 import { useLanguage } from "@/components/providers/LanguageProvider";

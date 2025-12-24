@@ -167,8 +167,10 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
           c.castShadow = true;
           c.receiveShadow = true;
 
-          const setWireframe = (material: any) => {
-            material.wireframe = settings.wireframe;
+          const setWireframe = (material: THREE.Material) => {
+            if ('wireframe' in material) {
+              (material as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
+            }
           };
 
           if (Array.isArray(c.material)) {
@@ -254,15 +256,17 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
       controlsRef.current.autoRotate = settings.autoRotate;
     if (gridRef.current) gridRef.current.visible = settings.showGrid;
     if (currentObjectRef.current) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      currentObjectRef.current.traverse((c: any) => {
-        if (c.isMesh && c.material) {
-          if (Array.isArray(c.material)) {
-            c.material.forEach((m: any) => {
-              m.wireframe = settings.wireframe;
+      currentObjectRef.current.traverse((c: THREE.Object3D) => {
+        const mesh = c as THREE.Mesh;
+        if (mesh.isMesh && mesh.material) {
+          if (Array.isArray(mesh.material)) {
+            mesh.material.forEach((m: THREE.Material) => {
+              if ('wireframe' in m) {
+                (m as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
+              }
             });
-          } else {
-            c.material.wireframe = settings.wireframe;
+          } else if ('wireframe' in mesh.material) {
+            (mesh.material as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
           }
         }
       });
