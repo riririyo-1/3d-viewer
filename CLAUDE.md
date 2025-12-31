@@ -30,6 +30,16 @@
 - pnpm をパッケージマネージャーとして使用
 - `frontend/src/app`にページ、`frontend/src/components`にコンポーネント配置
 - Server Components と Client Components を適切に使い分け
+- any 型は禁止
+
+- 推奨ツール
+  - Next.js (React フレームワーク)
+  - TypeScript (JavaScript のスーパーセット)
+  - Tailwind CSS (ユーティリティファースト CSS フレームワーク)
+  - shadcn/ui (Radix UI ベースの UI コンポーネントライブラリ)
+  - framer-motion (React アニメーションライブラリ)
+  - next-themes (Next.js 用のテーマ切り替えライブラリ)
+  - i18n 対応（ライブラリではなく、local/en.json, ja.json ファイルで管理）
 
 ## Amplify Gen 2 実装ルール
 
