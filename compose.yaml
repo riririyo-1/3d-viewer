@@ -1,4 +1,4 @@
-name: 3d-viewer
+name: studio-view
 
 services:
   frontend:

@@ -180,4 +180,4 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: false
-          tags: 3d-viewer:latest
+          tags: studio-view:latest

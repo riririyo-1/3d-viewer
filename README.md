@@ -1,4 +1,4 @@
-# 3d-viewer
+# studio-view
 
 ## 概要
 
