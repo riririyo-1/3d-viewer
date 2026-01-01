@@ -1,8 +1,19 @@
-# 3d-viewer
+# studio-view
+
+![Next.js](https://img.shields.io/badge/Next.js-16.1.0-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)
+![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat&logo=react)
+![Three.js](https://img.shields.io/badge/Three.js-0.182.0-black?style=flat&logo=three.js)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python)
+![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?style=flat&logo=pnpm)
 
 ## 概要
 
 3D データを簡単に表示するための Web アプリ。
+
+![画面イメージ1](./images/image.png)
+![画面イメージ2](./images/image-1.png)
 
 ## 機能（今回 対象外含む）
 
@@ -81,17 +92,18 @@
 下記の大きなフェーズに分けて、段階を踏んで実現する。
 
 1. フロントエンド作成
-2. GCP インフラ作成（terraform）
+2. バックエンド作成（ローカル立ち上げ版）
+3. GCP インフラ作成（terraform）
    1. ログイン機能
    2. バケット作成
-3. フロントエンド作成
+4. フロントエンド作成
    1. アップロード機能
    2. ファイル一覧機能
-4. 高効率フォーマット変換機能
-5. 座標データの高精度圧縮機能
-6. 自動サムネイル生成機能
-7. 共有リンク生成機能
-8. 課金機能
+5. 高効率フォーマット変換機能
+6. 座標データの高精度圧縮機能
+7. 自動サムネイル生成機能
+8. 共有リンク生成機能
+9. 課金機能
    1. プラン作成
    2. プランごとにアップロード容量制限設定
    3. プランごとにアップロード可能ファイル数制限設定
