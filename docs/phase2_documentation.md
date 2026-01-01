@@ -425,7 +425,7 @@ filters: |
 
 ---
 
-### シークレット管理
+### GitHub シークレット管理
 
 | シークレット名     | 説明                       | 用途                     |
 | ------------------ | -------------------------- | ------------------------ |
@@ -512,3 +512,62 @@ filters: |
 - 全テストパス、カバレッジ目標達成
 - セキュリティ監査通過
 - CI/CD でテスト自動実行
+
+---
+
+## 動作確認
+
+実行中サービスの確認コマンド
+
+```bash
+docker compose ps
+```
+
+エンドポイント一覧
+
+| サービス                | URL                                                | 説明                                                    |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| **Server API 情報**     | <http://localhost:4000>                            | エンドポイント一覧表示                                  |
+| **Server Swagger UI**   | <http://localhost:4000/api>                        | API ドキュメント（OpenAPI）                             |
+| **Server Health**       | <http://localhost:4000/health>                     | ヘルスチェック                                          |
+| **Pipeline API 情報**   | <http://localhost:8000>                            | エンドポイント一覧表示                                  |
+| **Pipeline Swagger UI** | <http://localhost:8000/docs>                       | API ドキュメント（OpenAPI）                             |
+| **Pipeline Health**     | <http://localhost:8000/health/>                    | ヘルスチェック                                          |
+| **Prisma Studio**       | <http://localhost:5555>                            | DB 管理画面（`cd server && pnpm prisma:studio` で起動） |
+| **MinIO Console**       | <http://localhost:9001/browser/studio-view-assets> | Username: `minioadmin` <br> Password: `minioadmin`      |
+| **PostgreSQL**          | localhost:5432                                     | データベース接続（CLI）                                 |
+| **Redis**               | localhost:6379                                     | キャッシュ・ジョブキュー接続（CLI）                     |
+
+### 認証フロー確認
+
+**ユーザー登録:**
+
+```bash
+curl -X POST http://localhost:4000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"test1234"}'
+```
+
+**レスポンス例:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**ログイン:**
+
+```bash
+curl -X POST http://localhost:4000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"test1234"}'
+```
+
+**認証確認:**
+
+```bash
+TOKEN="<取得したトークン>"
+curl -X GET http://localhost:4000/auth/me \
+  -H "Authorization: Bearer $TOKEN"
+```

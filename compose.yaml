@@ -72,26 +72,26 @@ services:
       minio:
         condition: service_healthy
 
-  # pipeline:
-  #   build:
-  #     context: ./pipeline
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8000:8000"
-  #   environment:
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - MINIO_ENDPOINT=minio
-  #     - MINIO_PORT=9000
-  #     - MINIO_ACCESS_KEY=minioadmin
-  #     - MINIO_SECRET_KEY=minioadmin
-  #     - MINIO_BUCKET_NAME=studio-view-assets
-  #     - API_PORT=8000
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #     minio:
-  #       condition: service_healthy
+  pipeline:
+    build:
+      context: ./pipeline
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET_NAME=studio-view-assets
+      - API_PORT=8000
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
 
 volumes:
   db_data:
