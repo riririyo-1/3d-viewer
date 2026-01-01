@@ -1,12 +1,99 @@
-name: studio-view
+version: "3.9"
 
 services:
-  frontend:
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=studio_view
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
     build:
-      context: ./frontend
+      context: ./server
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
-      - NODE_ENV=production
-    restart: always
+      - DATABASE_URL=postgresql://user:password@db:5432/studio_view
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_BUCKET_NAME=studio-view-assets
+      - PIPELINE_API_URL=http://pipeline:8000
+      - JWT_SECRET=your-super-secret-jwt-key
+      - PORT=4000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # pipeline:
+  #   build:
+  #     context: ./pipeline
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - MINIO_ENDPOINT=minio
+  #     - MINIO_PORT=9000
+  #     - MINIO_ACCESS_KEY=minioadmin
+  #     - MINIO_SECRET_KEY=minioadmin
+  #     - MINIO_BUCKET_NAME=studio-view-assets
+  #     - API_PORT=8000
+  #   depends_on:
+  #     redis:
+  #       condition: service_healthy
+  #     minio:
+  #       condition: service_healthy
+
+volumes:
+  db_data:
+  redis_data:
+  minio_data:
