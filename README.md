@@ -1,8 +1,19 @@
 # studio-view
 
+![Next.js](https://img.shields.io/badge/Next.js-16.1.0-black?style=flat&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)
+![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat&logo=react)
+![Three.js](https://img.shields.io/badge/Three.js-0.182.0-black?style=flat&logo=three.js)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python)
+![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?style=flat&logo=pnpm)
+
 ## 概要
 
 3D データを簡単に表示するための Web アプリ。
+
+![画面イメージ1](./images/image.png)
+![画面イメージ2](./images/image-1.png)
 
 ## 機能（今回 対象外含む）
 
