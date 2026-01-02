@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   title: "Visionary Geometry | StudioView",
   description:
     "Logic to Aesthetics. A minimalist space bringing new life to your 3D assets.",
+  icons: {
+    icon: "/png/favicon.png",
+    shortcut: "/png/favicon.png",
+    apple: "/png/favicon.png",
+  },
 };
 
 import { MainHeader } from "@/components/layout/MainHeader";

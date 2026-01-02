@@ -1,70 +1,21 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { Plus, Box, Trash2, Layers } from "lucide-react";
-import { useAppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useAuth } from "@/context/AuthContext";
-import { api, API_URL } from "@/lib/api";
-
-interface AssetResponse {
-  id: string;
-  name: string;
-  type: string;
-  downloadUrl: string;
-  thumbnailUrl: string | null;
-  createdAt: string;
-  storagePath: string;
-}
+import { api } from "@/lib/api";
+import { useAssets } from "@/hooks/useAssets";
 
 export default function CollectionPage() {
   const router = useRouter();
-  // const { setActiveAsset } = useAppStore(); // No longer needed
   const { t } = useLanguage();
   const { user } = useAuth();
 
-  // Local state for assets (synced with backend)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [assets, setAssets] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  // Use the custom hook for asset management
+  const { assets, loading, refresh } = useAssets();
   const [uploading, setUploading] = useState(false);
-
-  // Fetch Assets from Backend
-  const fetchAssets = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const response = await api.get<AssetResponse[]>("/assets");
-
-      const mappedAssets = response.data.map((item) => ({
-        id: item.id,
-        name: item.name,
-        type: item.type || "obj",
-        data: null,
-        url: `${API_URL}${item.downloadUrl}`,
-        thumbnailUrl: item.thumbnailUrl,
-        timestamp: new Date(item.createdAt).toLocaleDateString("en-US"),
-        storagePath: item.storagePath,
-      }));
-      setAssets(mappedAssets);
-    } catch (error) {
-      console.error("Failed to fetch assets", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      fetchAssets();
-      // Poll for processing updates
-      const interval = setInterval(fetchAssets, 10000);
-      return () => clearInterval(interval);
-    } else {
-      setAssets([]);
-    }
-  }, [user, fetchAssets]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -88,8 +39,8 @@ export default function CollectionPage() {
         },
       });
 
-      // Refresh list
-      await fetchAssets();
+      // Refresh list using the hook's refresh function
+      await refresh();
     } catch (error) {
       console.error("Upload failed", error);
       alert("Upload failed.");
@@ -104,7 +55,7 @@ export default function CollectionPage() {
 
     try {
       await api.delete(`/assets/${id}`);
-      await fetchAssets();
+      await refresh();
     } catch (error) {
       console.error("Delete failed", error);
     }
