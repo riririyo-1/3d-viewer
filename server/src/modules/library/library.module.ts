@@ -4,6 +4,6 @@ import { LibraryService } from './library.service';
 
 @Module({
   controllers: [LibraryController],
-  providers: [LibraryService]
+  providers: [LibraryService],
 })
 export class LibraryModule {}

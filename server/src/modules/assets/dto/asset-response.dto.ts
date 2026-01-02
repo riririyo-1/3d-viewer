@@ -21,4 +21,7 @@ export class AssetResponseDto {
 
   @ApiProperty()
   createdAt: Date;
+
+  @ApiProperty({ example: 'http://localhost:9000/bucket/file?signature=...' })
+  downloadUrl: string;
 }

@@ -14,7 +14,7 @@ export class MinioService implements OnModuleInit {
     );
   }
 
-  onModuleInit() {
+  async onModuleInit() {
     this.minioClient = new Minio.Client({
       endPoint: this.configService.get<string>('MINIO_ENDPOINT', 'localhost'),
       port: parseInt(this.configService.get<string>('MINIO_PORT', '9000'), 10),
@@ -29,13 +29,13 @@ export class MinioService implements OnModuleInit {
       ),
     });
 
-    this.ensureBucket();
+    await this.ensureBucket();
   }
 
   async ensureBucket() {
     const exists = await this.minioClient.bucketExists(this.bucketName);
     if (!exists) {
-      await this.minioClient.makeBucket(this.bucketName, 'us-east-1'); // Region is required but often ignored by MinIO default
+      await this.minioClient.makeBucket(this.bucketName, 'us-east-1');
       console.log(`Bucket ${this.bucketName} created.`);
     }
   }
@@ -46,5 +46,9 @@ export class MinioService implements OnModuleInit {
 
   get bucket() {
     return this.bucketName;
+  }
+
+  async getFileStream(objectName: string) {
+    return this.minioClient.getObject(this.bucketName, objectName);
   }
 }

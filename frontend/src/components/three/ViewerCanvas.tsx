@@ -141,93 +141,106 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
     animate();
 
     // LOAD MODEL
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleModel = (obj: any) => {
-      const target = asset.type === "obj" ? obj : obj.scene;
-
-      const box = new THREE.Box3().setFromObject(target);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      const scale = 2.8 / (Math.max(size.x, size.y, size.z) || 1);
-
-      target.scale.set(scale, scale, scale);
-      target.position.sub(center.multiplyScalar(scale));
-      target.position.y += (size.y * scale) / 2;
-
+    const loadModel = async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      target.traverse((c: any) => {
-        if (c.isMesh) {
-          if (asset.type === "obj") {
-            c.material = new THREE.MeshStandardMaterial({
-              color: 0x444444,
-              roughness: 0.5,
-              metalness: 0.1,
-            });
-          }
-          c.castShadow = true;
-          c.receiveShadow = true;
+      const handleModel = (obj: any) => {
+        const target = asset.type === "obj" ? obj : obj.scene;
 
-          const setWireframe = (material: THREE.Material) => {
-            if ('wireframe' in material) {
-              (material as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
+        const box = new THREE.Box3().setFromObject(target);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        const scale = 2.8 / (Math.max(size.x, size.y, size.z) || 1);
+
+        target.scale.set(scale, scale, scale);
+        target.position.sub(center.multiplyScalar(scale));
+        target.position.y += (size.y * scale) / 2;
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        target.traverse((c: any) => {
+          if (c.isMesh) {
+            if (asset.type === "obj") {
+              c.material = new THREE.MeshStandardMaterial({
+                color: 0x444444,
+                roughness: 0.5,
+                metalness: 0.1,
+              });
             }
-          };
+            c.castShadow = true;
+            c.receiveShadow = true;
 
-          if (Array.isArray(c.material)) {
-            c.material.forEach(setWireframe);
-          } else {
-            setWireframe(c.material);
+            const setWireframe = (material: THREE.Material) => {
+              if ("wireframe" in material) {
+                (material as THREE.MeshStandardMaterial).wireframe =
+                  settings.wireframe;
+              }
+            };
+
+            if (Array.isArray(c.material)) {
+              c.material.forEach(setWireframe);
+            } else {
+              setWireframe(c.material);
+            }
           }
-        }
-      });
+        });
 
-      scene.add(target);
-      currentObjectRef.current = target;
-    };
+        scene.add(target);
+        currentObjectRef.current = target;
+      };
 
-    if (asset.type === "obj") {
       try {
-        const loader = new OBJLoader();
+        let objectUrl = "";
+        let dataToParse: string | ArrayBuffer | null = null;
+
         if (asset.url) {
-          loader.load(asset.url, handleModel, undefined, (e) =>
-            console.error("Failed to load OBJ from URL", e)
-          );
-        } else if (typeof asset.data === "string") {
-          const result = loader.parse(asset.data);
-          handleModel(result);
+          // Use authenticated fetch
+          const token = localStorage.getItem("token");
+          const response = await fetch(asset.url, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+          const blob = await response.blob();
+          objectUrl = URL.createObjectURL(blob);
+        } else if (asset.data) {
+          dataToParse = asset.data;
         }
-      } catch (e) {
-        console.error("Failed to load OBJ", e);
-      }
-    } else {
-      try {
-        console.log("Loading GLB/GLTF...");
-        const loader = new GLTFLoader();
-        if (asset.url) {
-          loader.load(
-            asset.url,
-            (gltf) => {
+
+        if (asset.type === "obj") {
+          const loader = new OBJLoader();
+          if (objectUrl) {
+            loader.load(objectUrl, (obj) => {
+              handleModel(obj);
+              URL.revokeObjectURL(objectUrl);
+            });
+          } else if (dataToParse && typeof dataToParse === "string") {
+            handleModel(loader.parse(dataToParse));
+          }
+        } else {
+          console.log("Loading GLB/GLTF...");
+          const loader = new GLTFLoader();
+          if (objectUrl) {
+            loader.load(objectUrl, (gltf) => {
               console.log("GLB Loaded from URL", gltf);
               handleModel(gltf);
-            },
-            undefined,
-            (e) => console.error("Failed to load GLB from URL", e)
-          );
-        } else {
-          loader.parse(
-            asset.data,
-            "",
-            (gltf) => {
-              console.log("GLB Loaded", gltf);
-              handleModel(gltf);
-            },
-            (err: unknown) => console.error("GLB Load Error", err)
-          );
+              URL.revokeObjectURL(objectUrl);
+            });
+          } else if (dataToParse) {
+            loader.parse(
+              dataToParse as string | ArrayBuffer,
+              "",
+              (gltf) => {
+                console.log("GLB Loaded", gltf);
+                handleModel(gltf);
+              },
+              (err) => console.error("GLB Load Error", err)
+            );
+          }
         }
       } catch (e) {
-        console.error("Failed to load GLB", e);
+        console.error("Failed to load model", e);
       }
-    }
+    };
+
+    loadModel();
 
     // RESIZE
     const handleResize = () => {
@@ -261,12 +274,14 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
         if (mesh.isMesh && mesh.material) {
           if (Array.isArray(mesh.material)) {
             mesh.material.forEach((m: THREE.Material) => {
-              if ('wireframe' in m) {
-                (m as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
+              if ("wireframe" in m) {
+                (m as THREE.MeshStandardMaterial).wireframe =
+                  settings.wireframe;
               }
             });
-          } else if ('wireframe' in mesh.material) {
-            (mesh.material as THREE.MeshStandardMaterial).wireframe = settings.wireframe;
+          } else if ("wireframe" in mesh.material) {
+            (mesh.material as THREE.MeshStandardMaterial).wireframe =
+              settings.wireframe;
           }
         }
       });

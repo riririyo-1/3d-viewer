@@ -34,12 +34,11 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+    command: server /data --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
-    volumes:
-      - minio_data:/data
-    command: server /data --console-address ":9001"
+      - MINIO_API_CORS_ALLOW_ORIGIN=*
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
@@ -64,6 +63,7 @@ services:
       - PIPELINE_API_URL=http://pipeline:8000
       - JWT_SECRET=your-super-secret-jwt-key
       - PORT=4000
+      - CORS_ORIGINS=http://localhost:3000,http://100.76.140.*:3000
     depends_on:
       db:
         condition: service_healthy
@@ -92,6 +92,15 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
 
 volumes:
   db_data:

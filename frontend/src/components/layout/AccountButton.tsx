@@ -4,16 +4,15 @@ import React, { useState, useEffect } from "react";
 import { User, Globe, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function AccountButton() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { t, locale, setLocale } = useLanguage();
-
-  // Mock User
-  const user = {
-    name: "STUDIO USER",
-    plan: "PREMIUM PLAN",
-  };
+  const { user, logout } = useAuth();
+  const router = useRouter();
 
   const toggleAccount = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -25,6 +24,18 @@ export function AccountButton() {
     window.addEventListener("click", closeMenu);
     return () => window.removeEventListener("click", closeMenu);
   }, []);
+
+  if (!user) {
+    return (
+      <div className="fixed top-6 right-6 z-[120]">
+        <Link href="/login">
+          <button className="h-11 rounded-full bg-black px-6 text-[11px] font-bold text-white shadow-xl transition-all hover:scale-105 hover:bg-gray-900 active:scale-95">
+            LOG IN
+          </button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed top-6 right-6 z-[120] pointer-events-none">
@@ -50,11 +61,11 @@ export function AccountButton() {
           )}
         >
           <div className="p-4 border-b border-slate-100 bg-slate-50/30 flex flex-col items-center">
-            <span className="text-[11px] font-black text-slate-900 tracking-tight uppercase leading-tight">
-              {user.name}
+            <span className="text-[11px] font-black text-slate-900 tracking-tight uppercase leading-tight truncate w-full text-center">
+              {user.email.split("@")[0]}
             </span>
             <span className="text-[8px] font-bold text-slate-400 tracking-[0.2em] uppercase mt-1">
-              {user.plan}
+              {user.plan || "FREE PLAN"}
             </span>
           </div>
           <div className="p-1.5 flex flex-col">
@@ -94,7 +105,10 @@ export function AccountButton() {
               </span>
             </button>
             <div className="my-1 mx-2 h-px bg-slate-100" />
-            <button className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-red-50 group transition-all text-left text-red-500">
+            <button
+              onClick={() => logout()}
+              className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-red-50 group transition-all text-left text-red-500"
+            >
               <LogOut
                 size={13}
                 className="text-red-400 group-hover:text-red-600 transition-colors"

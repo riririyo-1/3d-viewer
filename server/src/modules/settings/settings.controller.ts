@@ -3,6 +3,7 @@ import { SettingsService } from './settings.service';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { RequestUser } from '../../common/interfaces/request-user.interface';
 
 @ApiTags('settings')
 @ApiBearerAuth()
@@ -19,7 +20,10 @@ export class SettingsController {
       properties: { language: { type: 'string', example: 'en' } },
     },
   })
-  updateLanguage(@CurrentUser() user: any, @Body('language') language: string) {
+  updateLanguage(
+    @CurrentUser() user: RequestUser,
+    @Body('language') language: string,
+  ) {
     return this.settingsService.updateLanguage(user.id, language);
   }
 }

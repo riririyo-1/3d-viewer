@@ -6,6 +6,19 @@ import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { firstValueFrom } from 'rxjs';
 import { Logger } from '@nestjs/common';
 
+interface ConversionJobData {
+  conversionJobId: string;
+  assetId: string;
+  storagePath: string;
+  outputFormat: string;
+}
+
+interface PipelineResponse {
+  converted_path: string;
+  format: string;
+  size?: number;
+}
+
 @Processor('conversion')
 export class ConversionProcessor extends WorkerHost {
   private readonly logger = new Logger(ConversionProcessor.name);
@@ -18,8 +31,8 @@ export class ConversionProcessor extends WorkerHost {
     super();
   }
 
-  async process(job: Job<any, any, string>): Promise<any> {
-    const { jobId, conversionJobId, storagePath, outputFormat } = job.data;
+  async process(job: Job<ConversionJobData>): Promise<void> {
+    const { conversionJobId, storagePath, outputFormat } = job.data;
     this.logger.log(
       `Processing job ${job.id} for conversion ${conversionJobId}`,
     );
@@ -42,21 +55,29 @@ export class ConversionProcessor extends WorkerHost {
 
       // Call Pipeline
       const response = await firstValueFrom(
-        this.httpService.post(`${pipelineUrl}/conversion/obj2glb`, {
-          storage_path: storagePath,
-          output_format: outputFormat,
-        }),
+        this.httpService.post<PipelineResponse>(
+          `${pipelineUrl}/conversion/obj2glb`,
+          {
+            storage_path: storagePath,
+            output_format: outputFormat,
+          },
+        ),
       );
 
       const result = response.data;
       this.logger.log(`Conversion successful: ${JSON.stringify(result)}`);
+
+      const convertedFileName = result.converted_path.split('/').pop();
+      if (!convertedFileName) {
+        throw new Error('Invalid converted path');
+      }
 
       // Update DB with result
       await this.prisma.conversionJob.update({
         where: { id: conversionJobId },
         data: {
           status: 'completed',
-          convertedName: result.converted_path.split('/').pop(),
+          convertedName: convertedFileName,
           convertedType: result.format,
           storagePath: result.converted_path,
           completedAt: new Date(),
@@ -74,21 +95,25 @@ export class ConversionProcessor extends WorkerHost {
         await this.prisma.asset.create({
           data: {
             userId: originalJob.userId,
-            name: result.converted_path.split('/').pop(),
+            name: convertedFileName,
             type: result.format,
-            size: BigInt(0), // We don't know the size yet unless pipeline returns it. Pipeline response update needed?
+            size: BigInt(result.size ?? 0),
             storagePath: result.converted_path,
           },
         });
       }
     } catch (error) {
-      this.logger.error(`Conversion failed: ${error.message}`, error.stack);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+
+      this.logger.error(`Conversion failed: ${errorMessage}`, errorStack);
 
       await this.prisma.conversionJob.update({
         where: { id: conversionJobId },
         data: {
           status: 'failed',
-          errorMessage: error.message,
+          errorMessage,
           completedAt: new Date(),
         },
       });

@@ -9,11 +9,15 @@ import {
   UseGuards,
   ParseFilePipe,
   MaxFileSizeValidator,
+  StreamableFile,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AssetsService } from './assets.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { RequestUser } from '../../common/interfaces/request-user.interface';
 import {
   ApiTags,
   ApiOperation,
@@ -45,7 +49,7 @@ export class AssetsController {
   })
   @UseInterceptors(FileInterceptor('file'))
   create(
-    @CurrentUser() user: any,
+    @CurrentUser() user: RequestUser,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -60,19 +64,36 @@ export class AssetsController {
 
   @Get()
   @ApiOperation({ summary: 'List user assets' })
-  findAll(@CurrentUser() user: any) {
+  findAll(@CurrentUser() user: RequestUser) {
     return this.assetsService.findAll(user.id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get asset details with download URL' })
-  findOne(@Param('id') id: string, @CurrentUser() user: any) {
+  findOne(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.assetsService.findOne(id, user.id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete asset' })
-  remove(@Param('id') id: string, @CurrentUser() user: any) {
+  remove(@Param('id') id: string, @CurrentUser() user: RequestUser) {
     return this.assetsService.remove(id, user.id);
+  }
+  @Get(':id/file')
+  @ApiOperation({ summary: 'Download asset file' })
+  async download(
+    @Param('id') id: string,
+    @CurrentUser() user: RequestUser,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { stream, filename, mimetype } =
+      await this.assetsService.getFileStream(id, user.id);
+
+    res.set({
+      'Content-Type': mimetype,
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    });
+
+    return new StreamableFile(stream);
   }
 }

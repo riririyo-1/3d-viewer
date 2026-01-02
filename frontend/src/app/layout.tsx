@@ -18,6 +18,8 @@ import { MainHeader } from "@/components/layout/MainHeader";
 import { AccountButton } from "@/components/layout/AccountButton";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,11 +30,13 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-sans antialiased min-h-screen overflow-x-hidden bg-[#f3f4f6]`}
       >
-        <LanguageProvider>
-          <MainHeader />
-          <AccountButton />
-          {children}
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <MainHeader />
+            <AccountButton />
+            {children}
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { ConversionService } from '../conversion/conversion.service';
+import { AssetResponseDto } from './dto/asset-response.dto';
 
 @Injectable()
 export class AssetsService {
@@ -19,7 +20,10 @@ export class AssetsService {
     private conversionService: ConversionService,
   ) {}
 
-  async create(userId: string, file: Express.Multer.File) {
+  async create(
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<AssetResponseDto> {
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -65,15 +69,23 @@ export class AssetsService {
     return this.mapToResponse(asset);
   }
 
-  async findAll(userId: string) {
+  async findAll(userId: string): Promise<AssetResponseDto[]> {
     const assets = await this.prisma.asset.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
-    return assets.map(this.mapToResponse);
+
+    // Return relative URL so frontend can prepend its dynamic API base
+    return assets.map((asset) => ({
+      ...this.mapToResponse(asset),
+      downloadUrl: `/assets/${asset.id}/file`,
+    }));
   }
 
-  async findOne(id: string, userId: string) {
+  async findOne(
+    id: string,
+    userId: string,
+  ): Promise<AssetResponseDto & { downloadUrl: string }> {
     const asset = await this.prisma.asset.findFirst({
       where: { id, userId },
     });
@@ -82,20 +94,14 @@ export class AssetsService {
       throw new NotFoundException(`Asset with ID ${id} not found`);
     }
 
-    // Generate Pre-signed URL for download (valid for 1 hour)
-    const downloadUrl = await this.minioService.client.presignedGetObject(
-      this.minioService.bucket,
-      asset.storagePath,
-      3600,
-    );
-
+    // Return relative URL
     return {
       ...this.mapToResponse(asset),
-      downloadUrl,
+      downloadUrl: `/assets/${asset.id}/file`,
     };
   }
 
-  async remove(id: string, userId: string) {
+  async remove(id: string, userId: string): Promise<{ message: string }> {
     const asset = await this.prisma.asset.findFirst({
       where: { id, userId },
     });
@@ -118,11 +124,56 @@ export class AssetsService {
     return { message: 'Asset deleted successfully' };
   }
 
-  private mapToResponse(asset: any) {
-    // Convert BigInt to number for JSON serialization
+  // -- BigIntをnumberに変換してJSON直列化可能にする --------------
+  private mapToResponse(asset: {
+    id: string;
+    userId: string;
+    name: string;
+    type: string;
+    size: bigint;
+    storagePath: string;
+    thumbnailUrl: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }): AssetResponseDto {
     return {
-      ...asset,
+      id: asset.id,
+      name: asset.name,
+      type: asset.type,
       size: Number(asset.size),
+      storagePath: asset.storagePath,
+      thumbnailUrl: asset.thumbnailUrl,
+      createdAt: asset.createdAt,
+      downloadUrl: '', // Default or handled by caller.
     };
+  }
+  async getFileStream(id: string, userId: string) {
+    const asset = await this.prisma.asset.findFirst({
+      where: { id, userId },
+    });
+
+    if (!asset) {
+      throw new NotFoundException(`Asset with ID ${id} not found`);
+    }
+
+    const stream = await this.minioService.getFileStream(asset.storagePath);
+    return {
+      stream,
+      filename: asset.name,
+      mimetype: this.getMimeType(asset.type),
+    };
+  }
+
+  private getMimeType(type: string): string {
+    switch (type.toLowerCase()) {
+      case 'obj':
+        return 'text/plain';
+      case 'glb':
+        return 'model/gltf-binary';
+      case 'gltf':
+        return 'model/gltf+json';
+      default:
+        return 'application/octet-stream';
+    }
   }
 }

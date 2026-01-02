@@ -515,6 +515,29 @@ filters: |
 
 ---
 
+### Stage 5: フロントエンド統合 (Phase 5)
+
+**作業内容**:
+
+- **API クライアント実装**:
+  - Axios のセットアップと Interceptor (JWT 付与)
+  - 環境変数 `NEXT_PUBLIC_API_URL` の設定
+- **認証機能の統合**:
+  - ログイン (`/auth/login`)・登録 (`/auth/register`) フォームの接続
+  - トークン管理 (LocalStorage/Cookie)
+- **アセット機能の統合**:
+  - Mock 廃止、API (`/assets`) からのデータ取得
+  - アップロード機能 (`FormData` 送信)
+  - 削除機能
+- **ビューワー・変換フロー**:
+  - 変換ステータスのフィードバック (ポーリング等)
+  - `storagePath` / `thumbnailUrl` (Signed URL) を用いた表示
+
+**完了条件**:
+
+- 実際のバックエンド API を用いてログイン・登録ができる
+- ファイルアップロード後、変換されたモデルが一覧・ビューワーで確認できる
+
 ## 動作確認
 
 実行中サービスの確認コマンド
@@ -527,6 +550,8 @@ docker compose ps
 
 | サービス                | URL                                                | 説明                                                    |
 | ----------------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| **Frontend**            | <http://localhost:3000>                            | フロントエンド                                          |
+| **Frontend Login**      | <http://localhost:3000/login>                      | Username: `test@example.com` <br>Password: `test1234`   |
 | **Server API 情報**     | <http://localhost:4000>                            | エンドポイント一覧表示                                  |
 | **Server Swagger UI**   | <http://localhost:4000/api>                        | API ドキュメント（OpenAPI）                             |
 | **Server Health**       | <http://localhost:4000/health>                     | ヘルスチェック                                          |
@@ -568,6 +593,54 @@ curl -X POST http://localhost:4000/auth/login \
 
 ```bash
 TOKEN="<取得したトークン>"
-curl -X GET http://localhost:4000/auth/me \
   -H "Authorization: Bearer $TOKEN"
 ```
+
+---
+
+## 環境変数設定
+
+### サーバー (server/.env)
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/studio_view"
+
+# CORS設定: カンマ区切りで複数のオリジンを許可可能
+# 例: http://localhost:3000,http://100.76.140.55:3000
+# ワイルドカード使用可: http://100.76.140.*:3000
+CORS_ORIGINS="http://localhost:3000,http://100.76.140.55:3000"
+```
+
+### フロントエンド (frontend/.env.local)
+
+```env
+# API URL設定
+# ローカル開発時は設定不要（自動的にブラウザのホストから推測される）
+# 特定のURLを指定したい場合のみ設定
+# NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+**動的API URL設定の動作:**
+
+- 環境変数 `NEXT_PUBLIC_API_URL` が未設定の場合、フロントエンドは自動的にブラウザのホスト名を使用
+- 例: `http://100.76.140.55:3000` からアクセスした場合、API URLは `http://100.76.140.55:4000` に自動設定される
+- これにより、VPN経由でのリモートアクセスや別デバイスからのアクセスが可能
+
+---
+
+## トラブルシューティング
+
+### 3D ビューワーでのファイル読み込みエラー (401/403)
+
+**問題:**
+ビューワーでモデルが表示されず、`403 Forbidden` (MinIO 署名エラー) や `401 Unauthorized` が発生。
+
+**原因:**
+
+1.  **署名不整合 (403):** MinIO の署名付き URL 生成時のホスト (`minio:9000`) と、ブラウザからのアクセス時のホスト (`localhost:9000`) が不一致。
+2.  **認証欠落 (401):** プロキシエンドポイント (`/assets/:id/file`) は JWT 認証必須だが、Three.js の標準ローダー (`OBJLoader`/`GLTFLoader`) は自動で認証ヘッダーを送信しない。
+
+**解決策:**
+
+1.  **プロキシ配信:** 直接 MinIO URL を使わず、NestJS 経由でストリーミング配信するエンドポイント (`GET /assets/:id/file`) を実装し、内部ネットワークで MinIO へアクセス。
+2.  **事前認証フェッチ:** Fronend (`ViewerCanvas`) で、ローダーに URL を渡す前に `fetch` API + `Authorization` ヘッダーでファイルを Blob として取得し、`URL.createObjectURL` でローカル URL を生成してローダーに渡す実装に変更。
