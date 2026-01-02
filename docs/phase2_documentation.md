@@ -366,30 +366,65 @@ GitHub Actions による自動化されたテスト・ビルド・デプロイ�
 
 ```mermaid
 flowchart TD
-    Start([Push / PR]) --> Changes[changes<br/>パス変更検知]
 
-    Changes --> FrontendLint[frontend-lint<br/>Lint + Type Check]
-    Changes --> FrontendUnit[frontend-unit-test<br/>Vitest]
-    Changes --> FrontendE2E[frontend-e2e-test<br/>Playwright]
-    Changes --> ServerTest[server-test<br/>Jest + E2E<br/>PostgreSQL + Redis]
-    Changes --> PipelineTest[pipeline-test<br/>pytest]
+    %% スタイル定義 (Styles)
+    classDef detection fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#7b1fa2;
+    classDef lint fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b;
+    classDef test fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32;
+    classDef build fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,color:#ef6c00;
 
-    FrontendLint --> BuildDocker[build-docker<br/>Docker Image Build]
-    FrontendUnit --> BuildDocker
-    ServerTest --> BuildDocker
-    PipelineTest --> BuildDocker
+    %% Legend (Decoupled Layout)
+    subgraph Legend [Legend]
+        direction LR
+        L_Det[Detection]:::detection --- L_Lint[Lint]:::lint --- L_Test[Test]:::test --- L_Bld[Build]:::build
+    end
 
-    BuildDocker --> Deploy{main branch?}
-    Deploy -->|Yes| Staging[deploy-staging<br/>Docker Push + Deploy]
-    Deploy -->|No| End([End])
+    Start([Push / PR]) --> Changes[changes<br/>Path Filter]:::detection
 
-    Staging --> Approval{Manual Approval}
-    Approval -->|Approved| Production[deploy-production<br/>Migration + Deploy + Notify]
-    Approval -->|Rejected| End
-    Production --> End
+    %% Frontend Group
+    subgraph Frontend [Frontend CI]
+        direction TB
+        FE_In(( )):::detection
+        FE_In --- FE_Lint[frontend-lint]:::lint
+        FE_In --- FE_Unit[frontend-unit]:::test
+        FE_In --- FE_E2E[frontend-e2e]:::test
+    end
+
+    %% Backend Group
+    subgraph Backend [Backend CI]
+        direction TB
+        BE_In(( )):::detection
+        BE_In --- BE_Lint[backend-lint]:::lint
+        BE_In --- BE_Unit[backend-unit]:::test
+        BE_In --- BE_E2E[backend-e2e]:::test
+    end
+
+    %% Pipeline Group
+    subgraph Pipeline [Pipeline CI]
+        direction TB
+        PL_In(( )):::detection
+        PL_In --- PL_Lint[pipeline-lint]:::lint
+        PL_In --- PL_Test[pipeline-test]:::test
+    end
+
+    %% Routing
+    Changes -- "frontend/**" --> FE_In
+    Changes -- "server/**" --> BE_In
+    Changes -- "pipeline/**" --> PL_In
+
+    %% Integration & Build
+    %% (Triggered after successful lint/test in each group)
+    FE_Lint & BE_Lint & PL_Lint -.-> Integration[integration-test]:::test
+    FE_Lint & BE_Lint & PL_Lint -.-> Build[build-docker]:::build
+
+    Changes -- "docker/**" --> Integration
+
+    Integration & Build --> End([End])
+
+    %% Layout Control with invisible link
+
+    Legend ~~~ Start
 ```
-
-### 追加ジョブ詳細
 
 #### パス変更検知 (`changes`)
 
@@ -401,29 +436,27 @@ filters: |
   docker: ['**/Dockerfile', 'compose.yaml']
 ```
 
-#### Server テスト (`server-test`)
+#### Backend CI
 
-- Node.js 20.x + pnpm
-- Prisma Client 生成
-- Jest (ユニット + E2E)
-- サービスコンテナ: PostgreSQL, Redis
+- **`backend-lint`**: Lint, Audit, Prisma Validate
+- **`backend-unit-test`**: Jest Unit Test
+- **`backend-e2e-test`**: Jest E2E Test (w/ Service Containers)
 
-#### Pipeline テスト (`pipeline-test`)
+#### Pipeline CI
 
-- Python 3.12
-- pytest + obj2gltf
+- **`pipeline-lint`**: Flake8, Black, Mypy
+- **`pipeline-test`**: Pytest
+
+#### Integration Test (`integration-test`)
+
+- `docker compose up -d --build` で全サービス起動
+- 各コンテナのヘルスチェック確認 (`docker ps` status)
+- サービス間の疎通確認
 
 #### Docker ビルド (`build-docker`)
 
-- Frontend, Server, Pipeline イメージビルド
-- needs: すべてのテストジョブ
-
-#### デプロイ (`deploy-staging`, `deploy-production`)
-
-- Staging: 自動デプロイ (main ブランチ)
-- Production: 手動承認後にデプロイ + DB マイグレーション
-
----
+- Frontend, Server, Pipeline の Docker イメージビルド
+- needs: Lint/Test ジョブの成功
 
 ### GitHub シークレット管理
 
@@ -620,11 +653,11 @@ CORS_ORIGINS="http://localhost:3000,http://100.76.140.55:3000"
 # NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
-**動的API URL設定の動作:**
+**動的 API URL 設定の動作:**
 
 - 環境変数 `NEXT_PUBLIC_API_URL` が未設定の場合、フロントエンドは自動的にブラウザのホスト名を使用
-- 例: `http://100.76.140.55:3000` からアクセスした場合、API URLは `http://100.76.140.55:4000` に自動設定される
-- これにより、VPN経由でのリモートアクセスや別デバイスからのアクセスが可能
+- 例: `http://100.76.140.55:3000` からアクセスした場合、API URL は `http://100.76.140.55:4000` に自動設定される
+- これにより、VPN 経由でのリモートアクセスや別デバイスからのアクセスが可能
 
 ---
 
