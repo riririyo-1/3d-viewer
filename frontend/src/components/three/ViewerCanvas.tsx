@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Asset } from "@/lib/store";
@@ -158,13 +159,6 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         target.traverse((c: any) => {
           if (c.isMesh) {
-            if (asset.type === "obj") {
-              c.material = new THREE.MeshStandardMaterial({
-                color: 0x444444,
-                roughness: 0.5,
-                metalness: 0.1,
-              });
-            }
             c.castShadow = true;
             c.receiveShadow = true;
 
@@ -205,12 +199,52 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
         }
 
         if (asset.type === "obj") {
+          // OBJファイルと同じディレクトリのMTLファイルを探す
+          const objPath = objectUrl || (asset.url || "");
+          const objDir = objPath.substring(0, objPath.lastIndexOf("/") + 1);
+          const objFileName = objPath.substring(objPath.lastIndexOf("/") + 1);
+          const mtlFileName = objFileName.replace(/\.obj$/i, ".mtl");
+          const mtlPath = objDir + mtlFileName;
+
           const loader = new OBJLoader();
+
+          // MTLファイルを先に読み込む
+          const loadOBJWithMTL = async () => {
+            try {
+              const mtlLoader = new MTLLoader();
+              mtlLoader.setPath(objDir);
+
+              const token = localStorage.getItem("token");
+              const mtlResponse = await fetch(mtlPath, {
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+              });
+
+              if (mtlResponse.ok) {
+                const mtlText = await mtlResponse.text();
+                const materials = mtlLoader.parse(mtlText, objDir);
+                materials.preload();
+                loader.setMaterials(materials);
+                console.log("MTL loaded successfully");
+              } else {
+                console.log("MTL not found, using default material");
+              }
+            } catch (e) {
+              console.log("Failed to load MTL, using default material", e);
+            }
+
+            // OBJファイルを読み込む
+            if (objectUrl) {
+              loader.load(objectUrl, (obj) => {
+                handleModel(obj);
+                URL.revokeObjectURL(objectUrl);
+              });
+            } else if (dataToParse && typeof dataToParse === "string") {
+              handleModel(loader.parse(dataToParse));
+            }
+          };
+
           if (objectUrl) {
-            loader.load(objectUrl, (obj) => {
-              handleModel(obj);
-              URL.revokeObjectURL(objectUrl);
-            });
+            loadOBJWithMTL();
           } else if (dataToParse && typeof dataToParse === "string") {
             handleModel(loader.parse(dataToParse));
           }
