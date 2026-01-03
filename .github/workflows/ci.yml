@@ -114,6 +114,29 @@ jobs:
     defaults:
       run:
         working-directory: ./frontend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: studio_view
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -135,14 +158,48 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-frontend-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-frontend-
-      - name: Install dependencies
+      - name: Install dependencies (root)
         run: pnpm install --frozen-lockfile
+        working-directory: ./
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
+      - name: Start MinIO
+        working-directory: ./
+        run: |
+          docker run -d -p 9000:9000 -p 9001:9001 --name minio \
+            -e MINIO_ROOT_USER=minioadmin \
+            -e MINIO_ROOT_PASSWORD=minioadmin \
+            minio/minio server /data --console-address ":9001"
+          timeout 30s bash -c 'until curl -s http://localhost:9000/minio/health/live; do sleep 1; done'
+      - name: Setup Backend Database
+        working-directory: ./server
+        run: |
+          pnpm exec prisma generate
+          pnpm exec prisma migrate deploy
+          pnpm exec prisma db seed
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+      - name: Start Backend Server
+        working-directory: ./server
+        run: |
+          pnpm start:dev &
+          timeout 30s bash -c 'until curl -s http://localhost:4000; do sleep 1; done'
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          MINIO_ENDPOINT: localhost
+          MINIO_PORT: 9000
+          MINIO_ACCESS_KEY: minioadmin
+          MINIO_SECRET_KEY: minioadmin
+          MINIO_BUCKET_NAME: studio-view-assets
+          JWT_SECRET: test-secret
+          PORT: 4000
       - name: Run E2E Tests
         run: pnpm test:e2e
         env:
           CI: true
+          NEXT_PUBLIC_API_URL: http://localhost:4000
       - name: Upload Playwright Report
         if: failure()
         uses: actions/upload-artifact@v4
@@ -293,6 +350,16 @@ jobs:
           timeout 30s bash -c 'until curl -s http://localhost:9000/minio/health/live; do sleep 1; done'
       - name: Prisma Generate
         run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+      - name: Prisma Migrate
+        run: pnpm exec prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+      - name: Prisma Seed
+        run: pnpm exec prisma db seed
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
       - name: E2E Tests
         run: pnpm test:e2e
         env:
