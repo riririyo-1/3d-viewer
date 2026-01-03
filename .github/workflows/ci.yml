@@ -260,11 +260,11 @@ jobs:
       - name: Prisma Generate
         run: pnpm exec prisma generate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
       - name: Prisma Validate
         run: pnpm exec prisma validate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
 
   backend-unit-test:
     needs: changes

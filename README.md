@@ -145,3 +145,37 @@
    2. プランごとにアップロード容量制限設定
    3. プランごとにアップロード可能ファイル数制限設定
    4. プランごとにアップロード可能ファイル種別制限設定
+
+## セットアップ手順
+
+### 1. 環境変数の設定
+
+**バックエンド（server）**
+
+```bash
+cd server
+cp .env.example .env
+# .envファイルを編集して、JWT_SECRET、MINIO_ACCESS_KEY、MINIO_SECRET_KEYを変更
+```
+
+**フロントエンド（frontend）**
+
+```bash
+cd frontend
+cp .env.example .env.local
+# 必要に応じて NEXT_PUBLIC_API_URL を設定
+```
+
+### 2. Docker Compose で起動
+
+```bash
+docker compose up -d --build
+```
+
+### 3. データベースマイグレーション
+
+```bash
+cd server
+pnpm exec prisma migrate deploy
+pnpm exec prisma db seed
+```
