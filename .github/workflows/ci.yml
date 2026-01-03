@@ -158,8 +158,12 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-frontend-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-frontend-
-      - name: Install dependencies (root)
-        run: cd $GITHUB_WORKSPACE && pnpm install --frozen-lockfile
+      - name: Install Frontend Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Backend Dependencies
+        run: |
+          cd ${{ github.workspace }}/server
+          pnpm install --frozen-lockfile
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
       - name: Start MinIO
@@ -170,16 +174,16 @@ jobs:
             minio/minio server /data --console-address ":9001"
           timeout 30s bash -c 'until curl -s http://localhost:9000/minio/health/live; do sleep 1; done'
       - name: Setup Backend Database
-        working-directory: ${{ github.workspace }}/server
         run: |
+          cd ${{ github.workspace }}/server
           pnpm exec prisma generate
           pnpm exec prisma migrate deploy
           pnpm exec prisma db seed
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
       - name: Start Backend Server
-        working-directory: ${{ github.workspace }}/server
         run: |
+          cd ${{ github.workspace }}/server
           pnpm start:dev &
           timeout 30s bash -c 'until curl -s http://localhost:4000; do sleep 1; done'
         env:
