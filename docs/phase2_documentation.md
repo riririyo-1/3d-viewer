@@ -422,8 +422,7 @@ flowchart TD
     Integration & Build --> End([End])
 
     %% Layout Control with invisible link
-
-    Legend ~~~ Start
+    L_Det ~~~ Start
 ```
 
 #### パス変更検知 (`changes`)
