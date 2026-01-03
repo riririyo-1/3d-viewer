@@ -29,8 +29,8 @@
 
 3D データを簡単に表示するための Web アプリ。
 
-![画面イメージ1](./images/image.png)
-![画面イメージ2](./images/image-1.png)
+![画面イメージ1](./docs/images/readme-overview-1.png)
+![画面イメージ2](./docs/images/readme-overview-2.png)
 
 ## 機能（今回 対象外含む）
 

@@ -184,8 +184,9 @@ jobs:
       - name: Start Backend Server
         run: |
           cd ${{ github.workspace }}/server
-          pnpm start:dev &
-          timeout 30s bash -c 'until curl -s http://localhost:4000; do sleep 1; done'
+          pnpm start:dev > /tmp/backend.log 2>&1 &
+          echo $! > /tmp/backend.pid
+          timeout 30s bash -c 'until curl -s http://localhost:4000; do sleep 1; done' || (cat /tmp/backend.log && exit 1)
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
           REDIS_HOST: localhost
@@ -197,8 +198,20 @@ jobs:
           MINIO_BUCKET_NAME: studio-view-assets
           JWT_SECRET: test-secret
           PORT: 4000
+          CORS_ORIGINS: http://localhost:3000
+      - name: Build Frontend
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000
+      - name: Start Frontend Server
+        run: |
+          pnpm start > /tmp/frontend.log 2>&1 &
+          echo $! > /tmp/frontend.pid
+          timeout 30s bash -c 'until curl -s http://localhost:3000; do sleep 1; done' || (cat /tmp/frontend.log && exit 1)
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000
       - name: Run E2E Tests
-        run: pnpm test:e2e
+        run: pnpm exec playwright test --config=playwright.config.ci.ts
         env:
           CI: true
           NEXT_PUBLIC_API_URL: http://localhost:4000
