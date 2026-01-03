@@ -187,8 +187,12 @@ jobs:
         run: pnpm lint
       - name: Prisma Generate
         run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
       - name: Prisma Validate
         run: pnpm exec prisma validate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
   backend-unit-test:
     needs: changes
