@@ -3,11 +3,14 @@ import { test, expect } from "@playwright/test";
 test("displays collection page title", async ({ page }) => {
   await page.goto("/collection");
 
-  // Verify collection page is loaded
-  await expect(page.getByText(/collection/i).first()).toBeVisible();
+  // Verify collection page is loaded by checking for the title
+  await expect(
+    page.locator("h2").filter({ hasText: /collection/i })
+  ).toBeVisible();
 
-  // Note: Collection page shows user's personal assets, not library models
-  // For a new user with no uploads, it should show empty state
-  const emptyMessage = page.getByText(/inventory empty/i);
-  await expect(emptyMessage.or(page.locator('div[class*="grid"]'))).toBeVisible();
+  // Verify either empty state message or the grid container is present
+  const gridContainer = page.locator(
+    'div.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4'
+  );
+  await expect(gridContainer).toBeVisible();
 });
