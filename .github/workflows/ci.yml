@@ -350,7 +350,7 @@ jobs:
           pip install -r requirements.txt
           pip install flake8 black mypy types-requests types-redis types-ujson
       - name: Run tests
-        run: pytest
+        run: PYTHONPATH=. pytest
 
   integration-test:
     needs: [changes, frontend-lint, backend-lint, pipeline-lint]
