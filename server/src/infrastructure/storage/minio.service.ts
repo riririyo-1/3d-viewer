@@ -16,10 +16,11 @@ export class MinioService implements OnModuleInit {
   }
 
   async onModuleInit(): Promise<void> {
+    const useSSL = this.configService.get<string>('MINIO_USE_SSL', 'false');
     this.minioClient = new Minio.Client({
       endPoint: this.configService.get<string>('MINIO_ENDPOINT', 'localhost'),
       port: parseInt(this.configService.get<string>('MINIO_PORT', '9000'), 10),
-      useSSL: this.configService.get<boolean>('MINIO_USE_SSL', false),
+      useSSL: useSSL === 'true',
       accessKey: this.configService.get<string>(
         'MINIO_ACCESS_KEY',
         'minioadmin',
