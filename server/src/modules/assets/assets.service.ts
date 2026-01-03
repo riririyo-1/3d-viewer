@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { ConversionService } from '../conversion/conversion.service';
 import { AssetResponseDto } from './dto/asset-response.dto';
+import { Readable } from 'stream';
 
 @Injectable()
 export class AssetsService {
@@ -151,7 +152,7 @@ export class AssetsService {
     id: string,
     userId: string,
   ): Promise<{
-    stream: NodeJS.ReadableStream;
+    stream: Readable;
     filename: string;
     mimetype: string;
   }> {

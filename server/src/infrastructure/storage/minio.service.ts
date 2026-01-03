@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Minio from 'minio';
+import { Readable } from 'stream';
 
 @Injectable()
 export class MinioService implements OnModuleInit {
@@ -48,7 +49,7 @@ export class MinioService implements OnModuleInit {
     return this.bucketName;
   }
 
-  async getFileStream(objectName: string): Promise<NodeJS.ReadableStream> {
+  async getFileStream(objectName: string): Promise<Readable> {
     return this.minioClient.getObject(this.bucketName, objectName);
   }
 }
