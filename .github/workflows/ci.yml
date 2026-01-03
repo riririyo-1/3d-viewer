@@ -446,6 +446,23 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Create .env file for CI
+        run: |
+          cat > server/.env << EOF
+          DATABASE_URL=postgresql://user:password@db:5432/studio_view
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          MINIO_ENDPOINT=minio
+          MINIO_PORT=9000
+          MINIO_USE_SSL=false
+          MINIO_ACCESS_KEY=minioadmin
+          MINIO_SECRET_KEY=minioadmin
+          MINIO_BUCKET_NAME=studio-view-assets
+          PIPELINE_API_URL=http://pipeline:8000
+          PORT=4000
+          JWT_SECRET=test-secret-key-for-ci-environment
+          CORS_ORIGINS=http://localhost:3000
+          EOF
       - name: Build and Start Services
         run: docker compose up -d --build
       - name: Check Services Health/Status
