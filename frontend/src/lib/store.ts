@@ -4,8 +4,10 @@ export interface Asset {
   id: string;
   name: string;
   type: string;
-  data: string | ArrayBuffer;
+  data: string | ArrayBuffer | null;
   url?: string;
+  thumbnailUrl?: string; // Add thumbnailUrl locally as well
+  storagePath?: string;
   timestamp: string;
 }
 
