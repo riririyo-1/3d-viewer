@@ -147,7 +147,14 @@ export class AssetsService {
       downloadUrl: '', // Default or handled by caller.
     };
   }
-  async getFileStream(id: string, userId: string) {
+  async getFileStream(
+    id: string,
+    userId: string,
+  ): Promise<{
+    stream: NodeJS.ReadableStream;
+    filename: string;
+    mimetype: string;
+  }> {
     const asset = await this.prisma.asset.findFirst({
       where: { id, userId },
     });

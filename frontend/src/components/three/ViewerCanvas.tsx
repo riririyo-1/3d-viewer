@@ -295,7 +295,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
       // Cleanup Three.js resources
       renderer.dispose();
     };
-  }, [asset]); // Re-init on asset change
+  }, [asset, settings.showGrid, settings.wireframe]); // Re-init on asset change
 
   // Update settings without re-init
   useEffect(() => {

@@ -30,9 +30,10 @@ export default function RegisterPage() {
         password,
       });
       login(loginResponse.data.access_token);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       setError(
-        err.response?.data?.message || "Registration failed. Please try again."
+        error.response?.data?.message || "Registration failed. Please try again."
       );
     } finally {
       setLoading(false);

@@ -20,9 +20,10 @@ export default function LoginPage() {
     try {
       const response = await api.post("/auth/login", { email, password });
       login(response.data.access_token);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
       setError(
-        err.response?.data?.message ||
+        error.response?.data?.message ||
           "Login failed. Please check your credentials."
       );
     } finally {
@@ -89,7 +90,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="font-medium text-black hover:underline"

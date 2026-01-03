@@ -6,13 +6,11 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export function AccountButton() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const { t, locale, setLocale } = useLanguage();
   const { user, logout } = useAuth();
-  const router = useRouter();
 
   const toggleAccount = (e: React.MouseEvent) => {
     e.stopPropagation();

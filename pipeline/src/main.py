@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from src.presentation.routers import conversion, health
 from src.config.settings import settings
@@ -30,4 +29,5 @@ app.include_router(conversion.router, prefix="/conversion", tags=["conversion"])
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=settings.PORT)
