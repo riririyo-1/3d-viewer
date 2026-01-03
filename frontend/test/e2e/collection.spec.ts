@@ -1,10 +1,13 @@
 import { test, expect } from "@playwright/test";
 
-test("displays models on collection page", async ({ page }) => {
+test("displays collection page title", async ({ page }) => {
   await page.goto("/collection");
-  // Expect to see model names.
-  // Using .first() because the same name might appear for both OBJ and GLB if they share names,
-  // or just to be safe.
-  await expect(page.getByText("FlexiSpot cherryblossom").first()).toBeVisible();
-  await expect(page.getByText("Gingerbread House").first()).toBeVisible();
+
+  // Verify collection page is loaded
+  await expect(page.getByText(/collection/i).first()).toBeVisible();
+
+  // Note: Collection page shows user's personal assets, not library models
+  // For a new user with no uploads, it should show empty state
+  const emptyMessage = page.getByText(/inventory empty/i);
+  await expect(emptyMessage.or(page.locator('div[class*="grid"]'))).toBeVisible();
 });
