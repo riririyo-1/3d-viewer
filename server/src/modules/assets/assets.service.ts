@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/database/prisma.service';
 import { MinioService } from '../../infrastructure/storage/minio.service';
@@ -18,12 +20,14 @@ export class AssetsService {
     private prisma: PrismaService,
     private minioService: MinioService,
     private configService: ConfigService,
+    @Inject(forwardRef(() => ConversionService))
     private conversionService: ConversionService,
   ) {}
 
   async create(
     userId: string,
     file: Express.Multer.File,
+    options?: { skipAutoConversion?: boolean },
   ): Promise<AssetResponseDto> {
     if (!file) {
       throw new BadRequestException('File is required');
@@ -58,12 +62,13 @@ export class AssetsService {
       },
     });
 
-    if (fileExt === 'obj') {
+    if (fileExt === 'obj' && !options?.skipAutoConversion) {
       await this.conversionService.createJob(
         userId,
         asset.id,
         objectName,
         asset.name,
+        'glb', // Default to GLB for auto-conversion
       );
     }
 

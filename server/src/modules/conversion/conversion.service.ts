@@ -15,15 +15,19 @@ export class ConversionService {
     assetId: string,
     storagePath: string,
     originalName: string,
+    outputFormat: 'glb' | 'gltf' = 'glb',
   ) {
+    const convertedExtension = outputFormat === 'glb' ? '.glb' : '.gltf';
+    const convertedName = originalName.replace(/\.obj$/i, convertedExtension);
+
     // Create DB entry
     const job = await this.prisma.conversionJob.create({
       data: {
         userId,
         originalName,
         originalType: 'obj',
-        convertedName: originalName.replace('.obj', '.glb'),
-        convertedType: 'glb',
+        convertedName: convertedName,
+        convertedType: outputFormat,
         status: 'pending',
       },
     });
@@ -33,7 +37,7 @@ export class ConversionService {
       conversionJobId: job.id,
       assetId,
       storagePath,
-      outputFormat: 'glb',
+      outputFormat: outputFormat,
     });
 
     return job;

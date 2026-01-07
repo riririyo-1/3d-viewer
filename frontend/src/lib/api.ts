@@ -43,3 +43,43 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export interface ConversionResponse {
+  conversionJobId: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  originalName: string;
+  convertedName?: string;
+  downloadUrl?: string;
+  message?: string;
+}
+
+// -- 変換リクエスト --------------
+export const uploadAndConvert = async (
+  file: File,
+  targetFormat: "glb" | "gltf"
+): Promise<ConversionResponse> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("targetFormat", targetFormat);
+
+  const response = await api.post<ConversionResponse>(
+    "/conversion/request",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data;
+};
+
+// -- ジョブステータス確認 (ポーリング用) --------------
+export const checkConversionStatus = async (
+  jobId: string
+): Promise<ConversionResponse> => {
+  const response = await api.get<ConversionResponse>(
+    `/conversion/status/${jobId}`
+  );
+  return response.data;
+};

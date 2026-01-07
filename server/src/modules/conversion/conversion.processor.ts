@@ -49,19 +49,19 @@ export class ConversionProcessor extends WorkerHost {
         'http://pipeline:8000',
       );
 
-      this.logger.debug(
-        `Calling pipeline at ${pipelineUrl}/conversion/obj2glb`,
-      );
+      const endpoint =
+        outputFormat === 'gltf'
+          ? '/conversion/obj2gltf'
+          : '/conversion/obj2glb';
+
+      this.logger.debug(`Calling pipeline at ${pipelineUrl}${endpoint}`);
 
       // Call Pipeline
       const response = await firstValueFrom(
-        this.httpService.post<PipelineResponse>(
-          `${pipelineUrl}/conversion/obj2glb`,
-          {
-            storage_path: storagePath,
-            output_format: outputFormat,
-          },
-        ),
+        this.httpService.post<PipelineResponse>(`${pipelineUrl}${endpoint}`, {
+          storage_path: storagePath,
+          output_format: outputFormat,
+        }),
       );
 
       const result = response.data;

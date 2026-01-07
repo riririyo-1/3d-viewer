@@ -64,22 +64,30 @@ export default function Home() {
             </div>
           </Link>
 
-          <div className="group relative p-1 rounded-[2.8rem] bg-white shadow-sm opacity-60 grayscale transition-all duration-500 cursor-not-allowed">
-            <div className="bg-slate-50/50 border border-dashed border-slate-200 rounded-[2.7rem] p-10 h-full flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 bg-slate-100 rounded-[1.8rem] flex items-center justify-center text-slate-300 mb-8 font-bold text-3xl">
-                ☁️
+          <Link
+            href="/conversion"
+            className="group relative p-1 rounded-[2.8rem] bg-gradient-to-b from-white to-slate-100 shadow-xl transition-all duration-500 hover:scale-[1.03] active:scale-95 text-center flex flex-col items-center"
+          >
+            <div className="bg-white rounded-[2.7rem] p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="w-20 h-20 bg-slate-100 rounded-[1.8rem] flex items-center justify-center text-indigo-400 mb-8 font-bold text-3xl group-hover:rotate-[-10deg] group-hover:scale-110 transition-all duration-700">
+                🔄
               </div>
-              <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-slate-400">
-                {t("home.cloudNode")}
+              <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
+                {t("home.conversion") || "Conversion"}
               </h3>
-              <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                {t("home.multiDeviceSync")}
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
+                {t("home.formatConverter") || "OBJ → GLB/GLTF"}
               </p>
-              <span className="mt-auto text-[9px] font-black uppercase tracking-[0.3em] text-slate-300">
-                {t("home.updatePending")}
-              </span>
+              <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                START
+                <ChevronRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </main>
