@@ -68,7 +68,7 @@ export default function CollectionPage() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-6 pt-24 pb-24 relative z-10 animate-in fade-in duration-700">
+    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-24 relative z-10 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 pt-4">
         <div>
           <h2 className="text-5xl font-black tracking-tighter text-slate-900 uppercase">

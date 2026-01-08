@@ -67,15 +67,21 @@ export function AccountButton() {
             </span>
           </div>
           <div className="p-1.5 flex flex-col">
-            <button className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-slate-900 group transition-all text-left">
-              <User
-                size={13}
-                className="text-slate-400 group-hover:text-white transition-colors"
-              />
-              <span className="text-[10px] font-bold text-slate-700 group-hover:text-white tracking-tight uppercase">
-                {t("common.account")}
-              </span>
-            </button>
+            <Link
+              href="/settings"
+              onClick={() => setIsAccountOpen(false)}
+              className="w-full"
+            >
+              <button className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-slate-900 group transition-all text-left">
+                <User
+                  size={13}
+                  className="text-slate-400 group-hover:text-white transition-colors"
+                />
+                <span className="text-[10px] font-bold text-slate-700 group-hover:text-white tracking-tight uppercase">
+                  {t("common.account")}
+                </span>
+              </button>
+            </Link>
             <button
               onClick={() => setLocale(locale === "en" ? "ja" : "en")}
               className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-slate-900 group transition-all text-left"
@@ -93,15 +99,21 @@ export function AccountButton() {
                 </span>
               </div>
             </button>
-            <button className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-slate-900 group transition-all text-left">
-              <Settings
-                size={13}
-                className="text-slate-400 group-hover:text-white transition-colors"
-              />
-              <span className="text-[10px] font-bold text-slate-700 group-hover:text-white tracking-tight uppercase">
-                {t("common.settings")}
-              </span>
-            </button>
+            <Link
+              href="/settings"
+              onClick={() => setIsAccountOpen(false)}
+              className="w-full"
+            >
+              <button className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-slate-900 group transition-all text-left">
+                <Settings
+                  size={13}
+                  className="text-slate-400 group-hover:text-white transition-colors"
+                />
+                <span className="text-[10px] font-bold text-slate-700 group-hover:text-white tracking-tight uppercase">
+                  {t("common.settings")}
+                </span>
+              </button>
+            </Link>
             <div className="my-1 mx-2 h-px bg-slate-100" />
             <button
               onClick={() => logout()}

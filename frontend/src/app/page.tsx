@@ -9,7 +9,7 @@ export default function Home() {
   const { t } = useLanguage();
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col items-center pt-32 px-6 overflow-hidden">
+    <main className="relative min-h-screen w-full flex flex-col items-center pt-24 md:pt-32 px-4 md:px-6 overflow-hidden">
       {/* Background Animation Blobs */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-100/40 rounded-full blur-[120px] animate-blob" />
@@ -19,7 +19,7 @@ export default function Home() {
 
       <div className="relative z-10 max-w-4xl w-full text-center">
         <div className="mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out text-center flex flex-col items-center">
-          <h2 className="text-6xl md:text-8xl font-black tracking-tighter text-slate-900 mb-8 leading-[0.95]">
+          <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 mb-8 leading-[0.95]">
             {t("home.title1")}
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-slate-500 to-slate-400">

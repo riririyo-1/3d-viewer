@@ -167,9 +167,13 @@ function ConversionPanel({
 
       // Start polling
       setTimeout(checkStatus, pollInterval);
-    } catch (error: any) {
-      console.error("Conversion error:", error);
+    } catch (err: unknown) {
+      console.error("Conversion error:", err);
       setStatus("error");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const error = err as any;
+
       setErrorMessage(
         error.response?.data?.message ||
           error.message ||
@@ -276,12 +280,11 @@ function ConversionPanel({
                   onClick={async () => {
                     try {
                       const { api } = await import("@/lib/api");
-                      const response = await api.get(downloadUrl, {
+                      const response = await api.get<Blob>(downloadUrl, {
                         responseType: "blob",
                       });
-                      const url = window.URL.createObjectURL(
-                        new Blob([response.data])
-                      );
+                      const blob = response.data;
+                      const url = window.URL.createObjectURL(blob);
                       const link = document.createElement("a");
                       link.href = url;
                       link.setAttribute(
@@ -289,10 +292,10 @@ function ConversionPanel({
                         targetFormat === "glb"
                           ? `converted.glb`
                           : `converted.gltf`
-                      ); // Fallback name, ideally get from content-disposition
+                      );
                       document.body.appendChild(link);
                       link.click();
-                      link.parentNode?.removeChild(link);
+                      document.body.removeChild(link);
                       window.URL.revokeObjectURL(url);
                     } catch (error) {
                       console.error("Download failed", error);
