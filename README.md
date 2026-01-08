@@ -1,19 +1,36 @@
 # studio-view
 
+**フロントエンド**
+
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.0-black?style=flat&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)
 ![React](https://img.shields.io/badge/React-19.2.3-blue?style=flat&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue?style=flat&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.18-38B2AC?style=flat&logo=tailwind-css)
 ![Three.js](https://img.shields.io/badge/Three.js-0.182.0-black?style=flat&logo=three.js)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=flat&logo=tailwind-css)
+
+**バックエンド**
+
+![NestJS](https://img.shields.io/badge/NestJS-11.1.11-E0234E?style=flat&logo=nestjs)
+![Prisma](https://img.shields.io/badge/Prisma-5.22.0-2D3748?style=flat&logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat&logo=postgresql)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=flat&logo=redis)
+
+**パイプライン**
+
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat&logo=fastapi)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python)
-![pnpm](https://img.shields.io/badge/pnpm-package_manager-F69220?style=flat&logo=pnpm)
+
+**全体**
+
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker)
+![pnpm](https://img.shields.io/badge/pnpm-10.27-F69220?style=flat&logo=pnpm)
 
 ## 概要
 
 3D データを簡単に表示するための Web アプリ。
 
-![画面イメージ1](./images/image.png)
-![画面イメージ2](./images/image-1.png)
+![画面イメージ1](./docs/images/readme-overview-1.png)
+![画面イメージ2](./docs/images/readme-overview-2.png)
 
 ## 機能（今回 対象外含む）
 
@@ -63,19 +80,39 @@
 
 - **Coding:** Claude Code / GitHub Copilot / Gemini
 
-## 技術スタック
+## 技術スタック詳細
 
-### フロントエンド
+詳細は [技術スタック完全ガイド](./docs/tech_stack.md) を参照
 
-- **フレームワーク**: Next.js 16 (App Router)
-- **言語**: TypeScript
-- **UI**: Tailwind CSS
-- **パッケージマネージャー**: pnpm
-- **3D ビューア**: Three.js
+### フロントエンド技術
 
-### 処理
+- **フレームワーク**: Next.js 16.1.0 (App Router)
+- **UI ライブラリ**: React 19.2.3
+- **言語**: TypeScript 5.9.3
+- **スタイリング**: Tailwind CSS 4.1.18
+- **3D レンダリング**: Three.js 0.182.0
+- **状態管理**: Zustand 5.0.9
+- **HTTP クライアント**: Axios 1.13.2
+
+### バックエンド技術
+
+- **フレームワーク**: NestJS 11.1.11
+- **ORM**: Prisma 5.22.0
+- **データベース**: PostgreSQL 16
+- **認証**: JWT + Passport.js
+- **ジョブキュー**: BullMQ 5.66.4 + Redis 7
+- **ストレージ**: MinIO (S3 互換)
+
+### 変換パイプライン技術
 
 - **言語**: Python 3.12
+- **フレームワーク**: FastAPI 0.115
+- **変換ツール**: obj2gltf
+
+### インフラ技術
+
+- **コンテナ化**: Docker + Docker Compose
+- **パッケージマネージャー**: pnpm 10.27
 
 ## 開発手順
 
@@ -108,3 +145,37 @@
    2. プランごとにアップロード容量制限設定
    3. プランごとにアップロード可能ファイル数制限設定
    4. プランごとにアップロード可能ファイル種別制限設定
+
+## セットアップ手順
+
+### 1. 環境変数の設定
+
+**バックエンド（server）**
+
+```bash
+cd server
+cp .env.example .env
+# .envファイルを編集して、JWT_SECRET、MINIO_ACCESS_KEY、MINIO_SECRET_KEYを変更
+```
+
+**フロントエンド（frontend）**
+
+```bash
+cd frontend
+cp .env.example .env.local
+# 必要に応じて NEXT_PUBLIC_API_URL を設定
+```
+
+### 2. Docker Compose で起動
+
+```bash
+docker compose up -d --build
+```
+
+### 3. データベースマイグレーション
+
+```bash
+cd server
+pnpm exec prisma migrate deploy
+pnpm exec prisma db seed
+```

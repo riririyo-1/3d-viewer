@@ -22,7 +22,23 @@
     "exploreCollection": "コレクションを見る",
     "cloudNode": "クラウドノード",
     "multiDeviceSync": "マルチデバイス同期",
-    "updatePending": "アップデート待機中"
+    "updatePending": "アップデート待機中",
+    "conversion": "変換",
+    "formatConverter": "OBJ → GLB/GLTF"
+  },
+  "conversion": {
+    "title": "フォーマット変換",
+    "subtitle": "Format Transformation Pipeline",
+    "objToGlb": "OBJ → GLB",
+    "objToGltf": "OBJ → GLTF",
+    "selectFile": "ファイルを選択",
+    "convert": "変換開始",
+    "download": "ダウンロード",
+    "dragDrop": "ドラッグ＆ドロップ または クリックしてアップロード",
+    "supportedFormat": "対応フォーマット: .obj",
+    "converting": "変換中...",
+    "success": "変換完了",
+    "error": "変換失敗"
   },
   "collection": {
     "title": "コレクション",

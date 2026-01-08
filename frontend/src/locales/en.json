@@ -22,7 +22,23 @@
     "exploreCollection": "Explore Collection",
     "cloudNode": "Cloud Node",
     "multiDeviceSync": "Multi-Device Sync",
-    "updatePending": "Update Pending"
+    "updatePending": "Update Pending",
+    "conversion": "Conversion",
+    "formatConverter": "OBJ → GLB/GLTF"
+  },
+  "conversion": {
+    "title": "Conversion",
+    "subtitle": "Format Transformation Pipeline",
+    "objToGlb": "OBJ → GLB",
+    "objToGltf": "OBJ → GLTF",
+    "selectFile": "Select File",
+    "convert": "Convert",
+    "download": "Download",
+    "dragDrop": "Drag & Drop or Click to Upload",
+    "supportedFormat": "Supported format: .obj",
+    "converting": "Converting...",
+    "success": "Conversion Successful",
+    "error": "Conversion Failed"
   },
   "collection": {
     "title": "Collections",
