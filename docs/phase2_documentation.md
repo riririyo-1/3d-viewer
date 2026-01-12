@@ -366,30 +366,64 @@ GitHub Actions による自動化されたテスト・ビルド・デプロイ�
 
 ```mermaid
 flowchart TD
-    Start([Push / PR]) --> Changes[changes<br/>パス変更検知]
 
-    Changes --> FrontendLint[frontend-lint<br/>Lint + Type Check]
-    Changes --> FrontendUnit[frontend-unit-test<br/>Vitest]
-    Changes --> FrontendE2E[frontend-e2e-test<br/>Playwright]
-    Changes --> ServerTest[server-test<br/>Jest + E2E<br/>PostgreSQL + Redis]
-    Changes --> PipelineTest[pipeline-test<br/>pytest]
+    %% スタイル定義 (Styles)
+    classDef detection fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#7b1fa2;
+    classDef lint fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b;
+    classDef test fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#2e7d32;
+    classDef build fill:#fff3e0,stroke:#ef6c00,stroke-width:2px,color:#ef6c00;
 
-    FrontendLint --> BuildDocker[build-docker<br/>Docker Image Build]
-    FrontendUnit --> BuildDocker
-    ServerTest --> BuildDocker
-    PipelineTest --> BuildDocker
+    %% Legend (Decoupled Layout)
+    subgraph Legend [Legend]
+        direction LR
+        L_Det[Detection]:::detection --- L_Lint[Lint]:::lint --- L_Test[Test]:::test --- L_Bld[Build]:::build
+    end
 
-    BuildDocker --> Deploy{main branch?}
-    Deploy -->|Yes| Staging[deploy-staging<br/>Docker Push + Deploy]
-    Deploy -->|No| End([End])
+    Start([Push / PR]) --> Changes[changes<br/>Path Filter]:::detection
 
-    Staging --> Approval{Manual Approval}
-    Approval -->|Approved| Production[deploy-production<br/>Migration + Deploy + Notify]
-    Approval -->|Rejected| End
-    Production --> End
+    %% Frontend Group
+    subgraph Frontend [Frontend CI]
+        direction TB
+        FE_In(( )):::detection
+        FE_In --- FE_Lint[frontend-lint]:::lint
+        FE_In --- FE_Unit[frontend-unit]:::test
+        FE_In --- FE_E2E[frontend-e2e]:::test
+    end
+
+    %% Backend Group
+    subgraph Backend [Backend CI]
+        direction TB
+        BE_In(( )):::detection
+        BE_In --- BE_Lint[backend-lint]:::lint
+        BE_In --- BE_Unit[backend-unit]:::test
+        BE_In --- BE_E2E[backend-e2e]:::test
+    end
+
+    %% Pipeline Group
+    subgraph Pipeline [Pipeline CI]
+        direction TB
+        PL_In(( )):::detection
+        PL_In --- PL_Lint[pipeline-lint]:::lint
+        PL_In --- PL_Test[pipeline-test]:::test
+    end
+
+    %% Routing
+    Changes -- "frontend/**" --> FE_In
+    Changes -- "server/**" --> BE_In
+    Changes -- "pipeline/**" --> PL_In
+
+    %% Integration & Build
+    %% (Triggered after successful lint/test in each group)
+    FE_Lint & BE_Lint & PL_Lint -.-> Integration[integration-test]:::test
+    FE_Lint & BE_Lint & PL_Lint -.-> Build[build-docker]:::build
+
+    Changes -- "docker/**" --> Integration
+
+    Integration & Build --> End([End])
+
+    %% Layout Control with invisible link
+    L_Det ~~~ Start
 ```
-
-### 追加ジョブ詳細
 
 #### パス変更検知 (`changes`)
 
@@ -401,31 +435,29 @@ filters: |
   docker: ['**/Dockerfile', 'compose.yaml']
 ```
 
-#### Server テスト (`server-test`)
+#### Backend CI
 
-- Node.js 20.x + pnpm
-- Prisma Client 生成
-- Jest (ユニット + E2E)
-- サービスコンテナ: PostgreSQL, Redis
+- **`backend-lint`**: Lint, Audit, Prisma Validate
+- **`backend-unit-test`**: Jest Unit Test
+- **`backend-e2e-test`**: Jest E2E Test (w/ Service Containers)
 
-#### Pipeline テスト (`pipeline-test`)
+#### Pipeline CI
 
-- Python 3.12
-- pytest + obj2gltf
+- **`pipeline-lint`**: Flake8, Black, Mypy
+- **`pipeline-test`**: Pytest
+
+#### Integration Test (`integration-test`)
+
+- `docker compose up -d --build` で全サービス起動
+- 各コンテナのヘルスチェック確認 (`docker ps` status)
+- サービス間の疎通確認
 
 #### Docker ビルド (`build-docker`)
 
-- Frontend, Server, Pipeline イメージビルド
-- needs: すべてのテストジョブ
+- Frontend, Server, Pipeline の Docker イメージビルド
+- needs: Lint/Test ジョブの成功
 
-#### デプロイ (`deploy-staging`, `deploy-production`)
-
-- Staging: 自動デプロイ (main ブランチ)
-- Production: 手動承認後にデプロイ + DB マイグレーション
-
----
-
-### シークレット管理
+### GitHub シークレット管理
 
 | シークレット名     | 説明                       | 用途                     |
 | ------------------ | -------------------------- | ------------------------ |
@@ -512,3 +544,135 @@ filters: |
 - 全テストパス、カバレッジ目標達成
 - セキュリティ監査通過
 - CI/CD でテスト自動実行
+
+---
+
+### Stage 5: フロントエンド統合 (Phase 5)
+
+**作業内容**:
+
+- **API クライアント実装**:
+  - Axios のセットアップと Interceptor (JWT 付与)
+  - 環境変数 `NEXT_PUBLIC_API_URL` の設定
+- **認証機能の統合**:
+  - ログイン (`/auth/login`)・登録 (`/auth/register`) フォームの接続
+  - トークン管理 (LocalStorage/Cookie)
+- **アセット機能の統合**:
+  - Mock 廃止、API (`/assets`) からのデータ取得
+  - アップロード機能 (`FormData` 送信)
+  - 削除機能
+- **ビューワー・変換フロー**:
+  - 変換ステータスのフィードバック (ポーリング等)
+  - `storagePath` / `thumbnailUrl` (Signed URL) を用いた表示
+
+**完了条件**:
+
+- 実際のバックエンド API を用いてログイン・登録ができる
+- ファイルアップロード後、変換されたモデルが一覧・ビューワーで確認できる
+
+## 動作確認
+
+実行中サービスの確認コマンド
+
+```bash
+docker compose ps
+```
+
+エンドポイント一覧
+
+| サービス                | URL                                                | 説明                                                    |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| **Frontend**            | <http://localhost:3000>                            | フロントエンド                                          |
+| **Frontend Login**      | <http://localhost:3000/login>                      | Username: `test@example.com` <br>Password: `test1234`   |
+| **Server API 情報**     | <http://localhost:4000>                            | エンドポイント一覧表示                                  |
+| **Server Swagger UI**   | <http://localhost:4000/api>                        | API ドキュメント（OpenAPI）                             |
+| **Server Health**       | <http://localhost:4000/health>                     | ヘルスチェック                                          |
+| **Pipeline API 情報**   | <http://localhost:8000>                            | エンドポイント一覧表示                                  |
+| **Pipeline Swagger UI** | <http://localhost:8000/docs>                       | API ドキュメント（OpenAPI）                             |
+| **Pipeline Health**     | <http://localhost:8000/health/>                    | ヘルスチェック                                          |
+| **Prisma Studio**       | <http://localhost:5555>                            | DB 管理画面（`cd server && pnpm prisma:studio` で起動） |
+| **MinIO Console**       | <http://localhost:9001/browser/studio-view-assets> | Username: `minioadmin` <br> Password: `minioadmin`      |
+| **PostgreSQL**          | localhost:5432                                     | データベース接続（CLI）                                 |
+| **Redis**               | localhost:6379                                     | キャッシュ・ジョブキュー接続（CLI）                     |
+
+### 認証フロー確認
+
+**ユーザー登録:**
+
+```bash
+curl -X POST http://localhost:4000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"test1234"}'
+```
+
+**レスポンス例:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**ログイン:**
+
+```bash
+curl -X POST http://localhost:4000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"test1234"}'
+```
+
+**認証確認:**
+
+```bash
+TOKEN="<取得したトークン>"
+  -H "Authorization: Bearer $TOKEN"
+```
+
+---
+
+## 環境変数設定
+
+### サーバー (server/.env)
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/studio_view"
+
+# CORS設定: カンマ区切りで複数のオリジンを許可可能
+# 例: http://localhost:3000,http://100.76.140.55:3000
+# ワイルドカード使用可: http://100.76.140.*:3000
+CORS_ORIGINS="http://localhost:3000,http://100.76.140.55:3000"
+```
+
+### フロントエンド (frontend/.env.local)
+
+```env
+# API URL設定
+# ローカル開発時は設定不要（自動的にブラウザのホストから推測される）
+# 特定のURLを指定したい場合のみ設定
+# NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+**動的 API URL 設定の動作:**
+
+- 環境変数 `NEXT_PUBLIC_API_URL` が未設定の場合、フロントエンドは自動的にブラウザのホスト名を使用
+- 例: `http://100.76.140.55:3000` からアクセスした場合、API URL は `http://100.76.140.55:4000` に自動設定される
+- これにより、VPN 経由でのリモートアクセスや別デバイスからのアクセスが可能
+
+---
+
+## トラブルシューティング
+
+### 3D ビューワーでのファイル読み込みエラー (401/403)
+
+**問題:**
+ビューワーでモデルが表示されず、`403 Forbidden` (MinIO 署名エラー) や `401 Unauthorized` が発生。
+
+**原因:**
+
+1.  **署名不整合 (403):** MinIO の署名付き URL 生成時のホスト (`minio:9000`) と、ブラウザからのアクセス時のホスト (`localhost:9000`) が不一致。
+2.  **認証欠落 (401):** プロキシエンドポイント (`/assets/:id/file`) は JWT 認証必須だが、Three.js の標準ローダー (`OBJLoader`/`GLTFLoader`) は自動で認証ヘッダーを送信しない。
+
+**解決策:**
+
+1.  **プロキシ配信:** 直接 MinIO URL を使わず、NestJS 経由でストリーミング配信するエンドポイント (`GET /assets/:id/file`) を実装し、内部ネットワークで MinIO へアクセス。
+2.  **事前認証フェッチ:** Fronend (`ViewerCanvas`) で、ローダーに URL を渡す前に `fetch` API + `Authorization` ヘッダーでファイルを Blob として取得し、`URL.createObjectURL` でローカル URL を生成してローダーに渡す実装に変更。

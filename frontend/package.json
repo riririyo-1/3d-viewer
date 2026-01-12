@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@types/three": "^0.182.0",
+    "axios": "^1.13.2",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.562.0",

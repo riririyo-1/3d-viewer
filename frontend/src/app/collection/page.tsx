@@ -1,87 +1,74 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Plus, Box, Trash2, Layers } from "lucide-react";
-import { useAppStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { useAuth } from "@/context/AuthContext";
+import { api } from "@/lib/api";
+import { useAssets } from "@/hooks/useAssets";
 
 export default function CollectionPage() {
   const router = useRouter();
-  const { assets, removeAsset, setActiveAsset, addAsset } = useAppStore();
   const { t } = useLanguage();
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  interface LibraryModel {
-    id: string;
-    name: string;
-    category: string;
-    url: string;
-    thumbnailUrl: string | null;
-  }
+  // Use the custom hook for asset management
+  const { assets, loading, refresh } = useAssets();
+  const [uploading, setUploading] = useState(false);
 
-  const [libraryModels, setLibraryModels] = useState<LibraryModel[]>([]);
-
-  useEffect(() => {
-    fetch("/api/models")
-      .then((res) => res.json())
-      .then((data) => setLibraryModels(data))
-      .catch((err) => console.error("Failed to load library", err));
-  }, []);
-
-  const handleLoadLibraryModel = async (model: LibraryModel) => {
-    setLoading(true);
-    // For URL based assets, we just pass the URL.
-    // However, if we want to "import" it into the local store as a distinct asset:
-    const newAsset = {
-      id: crypto.randomUUID(),
-      name: model.name,
-      type: model.category, // 'obj' or 'glb'
-      data: "", // No data body needed for URL loading
-      url: model.url,
-      timestamp: new Date().toLocaleDateString("en-US"),
-    };
-    addAsset(newAsset);
-    setActiveAsset(newAsset);
-    setLoading(false);
-    router.push("/viewer");
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setLoading(true);
-    const reader = new FileReader();
-    const ext = file.name.toLowerCase().split(".").pop() || "";
+    if (!user) {
+      alert("Please login to upload assets.");
+      router.push("/login");
+      return;
+    }
 
-    reader.onload = (event) => {
-      const result = event.target?.result;
-      if (!result) {
-        setLoading(false);
-        return;
-      }
+    setUploading(true);
 
-      const newAsset = {
-        id: crypto.randomUUID(),
-        name: file.name,
-        type: ext,
-        data: result,
-        timestamp: new Date().toLocaleDateString("en-US"),
-      };
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-      addAsset(newAsset);
-      setActiveAsset(newAsset);
-      setLoading(false);
-      router.push("/viewer");
-    };
+      await api.post("/assets", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    if (ext === "glb" || ext === "gltf") reader.readAsArrayBuffer(file);
-    else reader.readAsText(file);
+      // Refresh list using the hook's refresh function
+      await refresh();
+    } catch (error) {
+      console.error("Upload failed", error);
+      alert("Upload failed.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this asset?")) return;
+
+    try {
+      await api.delete(`/assets/${id}`);
+      await refresh();
+    } catch (error) {
+      console.error("Delete failed", error);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleAssetClick = (asset: any) => {
+    if (!asset.id) return;
+    router.push(`/viewer/${asset.id}`);
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-6 pt-24 pb-24 relative z-10 animate-in fade-in duration-700">
+    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-24 relative z-10 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 pt-4">
         <div>
           <h2 className="text-5xl font-black tracking-tighter text-slate-900 uppercase">
@@ -105,61 +92,31 @@ export default function CollectionPage() {
         </label>
       </div>
 
-      {/* PUBLIC LIBRARY SECTION */}
-      {libraryModels.length > 0 && (
-        <div className="mb-20">
-          <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest mb-8 border-b border-slate-100 pb-4">
-            Available Models
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {libraryModels.map((model) => (
-              <div
-                key={model.id}
-                onClick={() => handleLoadLibraryModel(model)}
-                className="group cursor-pointer bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1"
-              >
-                <div className="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center">
-                  {model.thumbnailUrl ? (
-                    <img
-                      src={model.thumbnailUrl}
-                      alt={model.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  ) : (
-                    <Box size={40} className="text-slate-300" />
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
-                </div>
-                <div className="p-4">
-                  <h4 className="text-xs font-bold text-slate-800 uppercase truncate">
-                    {model.name}
-                  </h4>
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">
-                    {model.category}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
         {assets.map((asset) => (
           <div
             key={asset.id}
-            onClick={() => {
-              setActiveAsset(asset);
-              router.push("/viewer");
-            }}
+            onClick={() => handleAssetClick(asset)}
             className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12)] hover:-translate-y-2 transition-all duration-700 cursor-pointer flex flex-col"
           >
             <div className="aspect-[4/3] bg-slate-50 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-tr from-slate-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <Box
-                size={60}
-                className="text-slate-200 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000 ease-out"
-              />
+              {asset.thumbnailUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={asset.thumbnailUrl}
+                  alt={asset.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-tr from-slate-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <Box
+                    size={60}
+                    className="text-slate-200 group-hover:scale-110 group-hover:rotate-12 transition-all duration-1000 ease-out"
+                  />
+                </>
+              )}
+
               <div className="absolute bottom-6 left-6 px-4 py-1.5 bg-white shadow-sm rounded-full text-[9px] font-black text-slate-600 uppercase tracking-widest border border-slate-50">
                 {asset.type}
               </div>
@@ -174,10 +131,7 @@ export default function CollectionPage() {
                 </p>
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeAsset(asset.id);
-                }}
+                onClick={(e) => handleDelete(asset.id, e)}
                 className="p-3 text-slate-200 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
               >
                 <Trash2 size={18} />
@@ -185,7 +139,7 @@ export default function CollectionPage() {
             </div>
           </div>
         ))}
-        {assets.length === 0 && (
+        {assets.length === 0 && !loading && (
           <div className="col-span-full h-96 bg-white/40 rounded-[3rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-300">
             <Layers size={54} className="mb-6 opacity-10" />
             <p className="text-[11px] font-black uppercase tracking-[0.5em]">
@@ -195,12 +149,14 @@ export default function CollectionPage() {
         )}
       </div>
 
-      {loading && (
+      {(loading || uploading) && (
         <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-md z-[500] flex items-center justify-center">
           <div className="bg-white p-12 rounded-[3rem] shadow-2xl flex flex-col items-center gap-6">
             <div className="w-14 h-14 border-[6px] border-slate-100 border-t-slate-900 rounded-full animate-spin" />
             <p className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-900">
-              {t("collection.processing")}
+              {uploading
+                ? "Uploading & Converting..."
+                : t("collection.processing")}
             </p>
           </div>
         </div>

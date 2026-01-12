@@ -32,7 +32,7 @@ export default function ViewerPage() {
 
       <div className="absolute inset-0 pointer-events-none p-6 flex flex-col">
         <div className="mt-auto w-full flex justify-center mb-6">
-          <footer className="pointer-events-auto bg-slate-900/90 backdrop-blur-2xl px-6 py-2.5 rounded-full shadow-2xl flex items-center gap-3 border border-white/10">
+          <footer className="pointer-events-auto bg-slate-900/90 backdrop-blur-2xl px-4 md:px-6 py-2.5 rounded-full shadow-2xl flex flex-wrap justify-center items-center gap-2 md:gap-3 border border-white/10 max-w-[90vw]">
             <button
               onClick={() =>
                 setSettings((s) => ({ ...s, wireframe: !s.wireframe }))

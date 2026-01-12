@@ -12,11 +12,18 @@ export const metadata: Metadata = {
   title: "Visionary Geometry | StudioView",
   description:
     "Logic to Aesthetics. A minimalist space bringing new life to your 3D assets.",
+  icons: {
+    icon: "/png/favicon.png",
+    shortcut: "/png/favicon.png",
+    apple: "/png/favicon.png",
+  },
 };
 
 import { MainHeader } from "@/components/layout/MainHeader";
 import { AccountButton } from "@/components/layout/AccountButton";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
+
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
@@ -28,11 +35,13 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-sans antialiased min-h-screen overflow-x-hidden bg-[#f3f4f6]`}
       >
-        <LanguageProvider>
-          <MainHeader />
-          <AccountButton />
-          {children}
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <MainHeader />
+            <AccountButton />
+            {children}
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );
