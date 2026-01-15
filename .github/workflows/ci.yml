@@ -5,6 +5,7 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,10 +18,10 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      server: ${{ steps.filter.outputs.server }}
-      pipeline: ${{ steps.filter.outputs.pipeline }}
-      docker: ${{ steps.filter.outputs.docker }}
+      frontend: "${{ steps.filter.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' ? 'true' : 'false' }}"
+      server: "${{ steps.filter.outputs.server == 'true' || github.event_name == 'workflow_dispatch' ? 'true' : 'false' }}"
+      pipeline: "${{ steps.filter.outputs.pipeline == 'true' || github.event_name == 'workflow_dispatch' ? 'true' : 'false' }}"
+      docker: "${{ steps.filter.outputs.docker == 'true' || github.event_name == 'workflow_dispatch' ? 'true' : 'false' }}"
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
