@@ -15,34 +15,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # changes:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     frontend: ${{ steps.filter.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
-  #     server: ${{ steps.filter.outputs.server == 'true' || github.event_name == 'workflow_dispatch' }}
-  #     pipeline: ${{ steps.filter.outputs.pipeline == 'true' || github.event_name == 'workflow_dispatch' }}
-  #     docker: ${{ steps.filter.outputs.docker == 'true' || github.event_name == 'workflow_dispatch' }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: dorny/paths-filter@v3
-  #       id: filter
-  #       with:
-  #         filters: |
-  #           frontend:
-  #             - 'frontend/**'
-  #           server:
-  #             - 'server/**'
-  #           pipeline:
-  #             - 'pipeline/**'
-  #           docker:
-  #             - 'frontend/Dockerfile'
-  #             - 'server/Dockerfile'
-  #             - 'pipeline/Dockerfile'
-  #             - 'compose.yaml'
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
+      server: ${{ steps.filter.outputs.server == 'true' || github.event_name == 'workflow_dispatch' }}
+      pipeline: ${{ steps.filter.outputs.pipeline == 'true' || github.event_name == 'workflow_dispatch' }}
+      docker: ${{ steps.filter.outputs.docker == 'true' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            server:
+              - 'server/**'
+            pipeline:
+              - 'pipeline/**'
+            docker:
+              - 'frontend/Dockerfile'
+              - 'server/Dockerfile'
+              - 'pipeline/Dockerfile'
+              - 'compose.yaml'
 
   frontend-lint:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.frontend == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -77,8 +77,8 @@ jobs:
         run: pnpm tsc --noEmit
 
   frontend-unit-test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.frontend == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -111,8 +111,8 @@ jobs:
         run: pnpm test run
 
   frontend-e2e-test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.frontend == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -231,8 +231,8 @@ jobs:
           retention-days: 30
 
   backend-lint:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.server == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -275,8 +275,8 @@ jobs:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
 
   backend-unit-test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.server == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -313,8 +313,8 @@ jobs:
         run: pnpm test:cov
 
   backend-e2e-test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.server == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.server == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -402,8 +402,8 @@ jobs:
           JWT_SECRET: test-secret
 
   pipeline-lint:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.pipeline == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.pipeline == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -431,8 +431,8 @@ jobs:
         run: mypy . --ignore-missing-imports
 
   pipeline-test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.pipeline == 'true' }}
+    needs: changes
+    if: ${{ needs.changes.outputs.pipeline == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -454,9 +454,8 @@ jobs:
         run: PYTHONPATH=. pytest
 
   integration-test:
-    # needs: [changes, frontend-lint, backend-lint, pipeline-lint]
-    # if: ${{ always() && (needs.changes.outputs.docker == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.server == 'true' || needs.changes.outputs.pipeline == 'true') }}
-    needs: [frontend-lint, backend-lint, pipeline-lint]
+    needs: [changes, frontend-lint, backend-lint, pipeline-lint]
+    if: ${{ always() && (needs.changes.outputs.docker == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.server == 'true' || needs.changes.outputs.pipeline == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -513,9 +512,8 @@ jobs:
           echo "All services up and running!"
 
   build-docker:
-    # needs: [changes, frontend-lint, backend-lint, pipeline-lint]
-    # if: ${{ always() && (needs.backend-lint.result == 'success' || needs.backend-lint.result == 'skipped') && (needs.pipeline-lint.result == 'success' || needs.pipeline-lint.result == 'skipped') && (needs.frontend-lint.result == 'success' || needs.frontend-lint.result == 'skipped') }}
-    needs: [frontend-lint, backend-lint, pipeline-lint]
+    needs: [changes, frontend-lint, backend-lint, pipeline-lint]
+    if: ${{ always() && (needs.backend-lint.result == 'success' || needs.backend-lint.result == 'skipped') && (needs.pipeline-lint.result == 'success' || needs.pipeline-lint.result == 'skipped') && (needs.frontend-lint.result == 'success' || needs.frontend-lint.result == 'skipped') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -523,7 +521,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Frontend Image
-        # if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.docker == 'true' }}
+        if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.docker == 'true' }}
 
         uses: docker/build-push-action@v5
         with:
@@ -533,7 +531,7 @@ jobs:
           tags: studio-view-frontend:latest
 
       - name: Build Server Image
-        # if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.docker == 'true' }}
+        if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.docker == 'true' }}
 
         uses: docker/build-push-action@v5
         with:
@@ -543,7 +541,7 @@ jobs:
           tags: studio-view-server:latest
 
       - name: Build Pipeline Image
-        # if: ${{ needs.changes.outputs.pipeline == 'true' || needs.changes.outputs.docker == 'true' }}
+        if: ${{ needs.changes.outputs.pipeline == 'true' || needs.changes.outputs.docker == 'true' }}
 
         uses: docker/build-push-action@v5
         with:
