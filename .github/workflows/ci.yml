@@ -465,6 +465,9 @@ jobs:
           PORT=4000
           JWT_SECRET=test-secret-key-for-ci-environment
           CORS_ORIGINS=http://localhost:3000
+          GOOGLE_CLIENT_ID=test-client-id
+          GOOGLE_CLIENT_SECRET=test-client-secret
+          GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
           EOF
       - name: Build and Start Services
         run: docker compose up -d --build
