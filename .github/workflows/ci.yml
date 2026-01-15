@@ -379,6 +379,9 @@ jobs:
         run: pnpm test:e2e
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+          GOOGLE_CLIENT_ID: "test-client-id"
+          GOOGLE_CLIENT_SECRET: "test-client-secret"
+          GOOGLE_CALLBACK_URL: "http://localhost:3000/auth/google/callback"
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           MINIO_ENDPOINT: localhost
