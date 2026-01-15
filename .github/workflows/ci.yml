@@ -18,10 +18,10 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
-      server: ${{ steps.filter.outputs.server == 'true' || github.event_name == 'workflow_dispatch' }}
-      pipeline: ${{ steps.filter.outputs.pipeline == 'true' || github.event_name == 'workflow_dispatch' }}
-      docker: ${{ steps.filter.outputs.docker == 'true' || github.event_name == 'workflow_dispatch' }}
+      frontend: 'true'
+      server: 'true'
+      pipeline: 'true'
+      docker: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
