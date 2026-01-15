@@ -10,7 +10,14 @@
     "account": "Account",
     "language": "Language",
     "settings": "Settings",
+    "accountProfile": "Account & Profile",
     "logout": "Logout"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "language": "Language",
+    "accountProfile": "Account & Profile"
   },
   "home": {
     "title1": "Visionary",

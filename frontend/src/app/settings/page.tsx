@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, User, CreditCard, HardDrive, Globe } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { useAuth } from "@/context/AuthContext";
@@ -14,11 +15,22 @@ export default function SettingsPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("account");
 
-  // Mock data for display
-  const plan = user ? "Pro Plan" : "Free Plan";
-  const storageUsed = "1.2 GB";
-  const storageLimit = "5.0 GB";
-  const storagePercent = 24;
+  // Real data from AuthContext
+  const plan = user?.plan === "pro" ? "Pro Plan" : "Free Plan";
+  
+  const formatBytes = (bytes: string | number) => {
+    const value = typeof bytes === "string" ? parseInt(bytes, 10) : bytes;
+    if (isNaN(value) || value === 0) return "0 GB";
+    const gb = value / (1024 * 1024 * 1024);
+    return `${gb.toFixed(1)} GB`;
+  };
+
+  const storageUsedBytes = user?.storageUsed ? parseInt(user.storageUsed, 10) : 0;
+  const storageLimitBytes = user?.storageLimit ? parseInt(user.storageLimit, 10) : 1073741824; // Default 1GB
+
+  const storageUsed = formatBytes(storageUsedBytes);
+  const storageLimit = formatBytes(storageLimitBytes);
+  const storagePercent = Math.min(100, Math.round((storageUsedBytes / storageLimitBytes) * 100));
 
   return (
     <main className="relative min-h-screen w-full flex flex-col pt-24 md:pt-32 px-4 md:px-6 overflow-hidden bg-slate-50">
@@ -83,8 +95,17 @@ export default function SettingsPage() {
               <div className="space-y-8">
                 {/* Profile Card */}
                 <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-blue-500/30">
-                    {user?.email ? user.email[0].toUpperCase() : "G"}
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-blue-500/30 overflow-hidden">
+                    {user?.avatarUrl ? (
+                      <Image
+                        src={user.avatarUrl}
+                        alt="Profile"
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      user?.email ? user.email[0].toUpperCase() : "G"
+                    )}
                   </div>
                   <div>
                     <p className="font-bold text-slate-900">

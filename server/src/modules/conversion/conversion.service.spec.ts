@@ -47,6 +47,7 @@ describe('ConversionService', () => {
       expect(mockPrismaService.conversionJob.create).toHaveBeenCalledWith({
         data: {
           userId,
+          assetId,
           originalName,
           originalType: 'obj',
           convertedName: 'model.glb',

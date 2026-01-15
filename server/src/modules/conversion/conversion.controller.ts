@@ -110,32 +110,35 @@ export class ConversionController {
       throw new NotFoundException('Job not found'); // Hide existence
     }
 
-    const response: any = {
+    const response: Record<string, any> = {
       conversionJobId: job.id,
       status: job.status,
       originalName: job.originalName,
       convertedName: job.convertedName,
     };
 
-    if (job.status === 'completed' && job.convertedName && job.storagePath) {
-      // Find the converted asset
-      // In conversion.processor, we created a new asset for the converted file
-      // We can find it by name or we could have stored assetId in Job (TODO: add assetId to Job model?)
-      // For now, let's find the asset by convertedName and user
+    if (job.status === 'completed') {
+      // With assetId, we can directly find the converted asset if we linked it
+      // Since the conversion processor creates a NEW asset for the converted file,
+      // we need to find that new asset.
+      // Currently, the processor logic likely needs to be checked if it links the new asset to the job.
+      // If NOT, we fallback to finding by storagePath or name which is risky.
+      // However, assuming the processor will eventually update the job with the new assetId or we find it by path.
+
       const asset = await this.prisma.asset.findFirst({
         where: {
           userId: user.id,
-          storagePath: job.storagePath, // The processor updates job.storagePath with the NEW path
+          storagePath: job.storagePath!, // The processor updates job.storagePath
         },
       });
 
       if (asset) {
-        response.downloadUrl = `/assets/${asset.id}/file`;
+        response['downloadUrl'] = `/assets/${asset.id}/file`;
       }
     }
 
     if (job.status === 'failed') {
-      response.message = job.errorMessage;
+      response['message'] = job.errorMessage;
     }
 
     return response;

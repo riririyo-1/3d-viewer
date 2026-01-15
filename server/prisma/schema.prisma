@@ -11,7 +11,9 @@ datasource db {
 model User {
   id            String   @id @default(uuid()) @db.Uuid
   email         String   @unique @db.VarChar(255)
-  password      String   @db.VarChar(255)
+  password      String?  @db.VarChar(255)
+  googleId      String?  @unique @map("google_id") @db.VarChar(255)
+  avatarUrl     String?  @map("avatar_url") @db.Text
   plan          String   @db.VarChar(20)  // free, pro, enterprise
   language      String   @default("ja") @db.VarChar(5)  // ja, en
   storageUsed   BigInt   @default(0) @map("storage_used")
@@ -41,6 +43,7 @@ model Asset {
 
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   recentHistory RecentHistory[]
+  conversionJobs ConversionJob[]
 
   @@index([userId], name: "idx_assets_user_id")
   @@index([type], name: "idx_assets_type")
@@ -88,15 +91,18 @@ model ConversionJob {
   originalType   String    @map("original_type") @db.VarChar(10)
   convertedName  String    @map("converted_name") @db.VarChar(255)
   convertedType  String    @map("converted_type") @db.VarChar(10)
+  assetId        String    @map("asset_id") @db.Uuid
   status         String    @db.VarChar(20)  // pending, processing, completed, failed
   storagePath    String?   @map("storage_path") @db.VarChar(512)
   errorMessage   String?   @map("error_message") @db.Text
   createdAt      DateTime  @default(now()) @map("created_at")
   completedAt    DateTime? @map("completed_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@index([userId], name: "idx_conversion_user_id")
+  @@index([assetId], name: "idx_conversion_asset_id")
   @@index([status], name: "idx_conversion_status")
   @@index([createdAt(sort: Desc)], name: "idx_conversion_created_at")
   @@map("conversion_jobs")

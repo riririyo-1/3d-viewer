@@ -8,6 +8,9 @@ interface User {
   id: string;
   email: string;
   plan: string;
+  avatarUrl?: string | null;
+  storageUsed: string; // BigInt serialized as string
+  storageLimit: string;
 }
 
 interface AuthContextType {

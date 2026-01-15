@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -11,6 +19,8 @@ import {
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { RequestUser } from '../../common/interfaces/request-user.interface';
+
+import { GoogleOauthGuard } from './guards/google-oauth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,6 +41,24 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async googleAuth(@Req() _req: any) {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthRedirect(@Req() req: any, @Res() res: any) {
+    const user = await this.authService.validateGoogleUser(req.user);
+    const token = this.authService.generateToken(user);
+
+    // Dynamically determine frontend URL from request host to support LAN access
+    const hostname = req.get('host').split(':')[0];
+    const frontendUrl = process.env.FRONTEND_URL || `http://${hostname}:3000`;
+
+    res.redirect(`${frontendUrl}/auth/callback?token=${token.access_token}`);
   }
 
   @Get('me')

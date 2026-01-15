@@ -47,15 +47,75 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (
+      !user ||
+      !user.password ||
+      !(await bcrypt.compare(password, user.password))
+    ) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     return this.generateToken(user);
   }
 
-  private generateToken(user: { id: string; email: string; plan: string }) {
-    const payload = { sub: user.id, email: user.email, plan: user.plan };
+  async validateGoogleUser(details: {
+    email: string;
+    googleId: string;
+    picture?: string;
+  }) {
+    console.log('Validating Google User', details);
+    const user = await this.prisma.user.findUnique({
+      where: { email: details.email },
+    });
+
+    if (user) {
+      if (!user.googleId) {
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            googleId: details.googleId,
+            avatarUrl: details.picture,
+          },
+        });
+      } else if (details.picture && user.avatarUrl !== details.picture) {
+        // Update avatar if changed
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: { avatarUrl: details.picture },
+        });
+      }
+      return user;
+    }
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        email: details.email,
+        googleId: details.googleId,
+        avatarUrl: details.picture,
+        plan: 'free',
+        storageLimit: 1073741824, // 1GB
+      },
+    });
+
+    return newUser;
+  }
+
+  generateToken(user: {
+    id: string;
+    email: string;
+    plan: string;
+    avatarUrl?: string | null;
+    storageUsed?: bigint;
+    storageLimit?: bigint;
+  }) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      plan: user.plan,
+      avatarUrl: user.avatarUrl,
+      storageUsed: user.storageUsed ? user.storageUsed.toString() : '0',
+      storageLimit: user.storageLimit ? user.storageLimit.toString() : '0',
+    };
     return {
       access_token: this.jwtService.sign(payload),
     };

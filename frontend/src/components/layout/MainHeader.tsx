@@ -72,8 +72,8 @@ export function MainHeader() {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full flex justify-center py-6 px-6 pointer-events-none z-[100]">
-      <header className="pointer-events-auto bg-white/70 backdrop-blur-2xl px-5 py-2 rounded-full border border-slate-200/50 shadow-xl shadow-slate-200/20 flex items-center gap-5 transition-all duration-300">
+    <div className="fixed top-0 left-0 w-full flex justify-center py-4 px-4 md:py-6 md:px-6 pointer-events-none z-[100]">
+      <header className="pointer-events-auto bg-white/70 backdrop-blur-2xl px-3 py-2 md:px-5 rounded-full border border-slate-200/50 shadow-xl shadow-slate-200/20 flex items-center gap-2 md:gap-5 transition-all duration-300">
         {/* Collection Menu */}
         <div className="relative">
           <button

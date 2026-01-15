@@ -1,55 +1,62 @@
 {
   "common": {
     "manageAssets": "Manage Assets",
-    "openCollection": "コレクションを開く",
-    "importAsset": "アセットをインポート",
-    "recentlyOpened": "最近開いた項目",
-    "noHistory": "履歴なし",
+    "openCollection": "Open Collection",
+    "importAsset": "Import Asset",
+    "recentlyOpened": "Recent History",
+    "noHistory": "NO HISTORY",
     "studio": "Studio",
     "view": "View",
-    "account": "アカウント",
-    "language": "言語",
-    "settings": "設定",
-    "logout": "ログアウト"
+    "account": "Account",
+    "language": "Language",
+    "settings": "Settings",
+    "accountProfile": "Account & Profile",
+    "logout": "Log out"
   },
   "home": {
     "title1": "Visionary",
     "title2": "Geometry.",
     "subtitle": "論理から美学へ。3Dアセットに新たな命と深い静寂をもたらすミニマリスト空間。",
     "studioPerspective": "Studio Perspective",
-    "myCollection": "マイコレクション",
-    "personalAssetLibrary": "個人アセットライブラリ",
-    "exploreCollection": "コレクションを見る",
-    "cloudNode": "クラウドノード",
+    "myCollection": "My Collection",
+    "personalAssetLibrary": "Personal Asset Library",
+    "exploreCollection": "Explore Collection",
+    "cloudNode": "Cloud Node",
     "multiDeviceSync": "マルチデバイス同期",
     "updatePending": "アップデート待機中",
-    "conversion": "変換",
+    "conversion": "Conversion",
     "formatConverter": "OBJ → GLB/GLTF"
   },
   "conversion": {
-    "title": "フォーマット変換",
+    "title": "Conversion",
     "subtitle": "Format Transformation Pipeline",
     "objToGlb": "OBJ → GLB",
     "objToGltf": "OBJ → GLTF",
-    "selectFile": "ファイルを選択",
-    "convert": "変換開始",
-    "download": "ダウンロード",
-    "dragDrop": "ドラッグ＆ドロップ または クリックしてアップロード",
+    "selectFile": "Select File",
+    "convert": "Convert",
+    "download": "Download",
+    "dragDrop": "Drag & Drop or Click to Upload",
     "supportedFormat": "対応フォーマット: .obj",
-    "converting": "変換中...",
-    "success": "変換完了",
-    "error": "変換失敗"
+    "converting": "Converting...",
+    "success": "Conversion Successful",
+    "error": "Conversion Failed"
   },
   "collection": {
-    "title": "コレクション",
-    "subtitle": "デジタル幾何学アーカイブ",
-    "newImport": "新規インポート",
-    "inventoryEmpty": "在庫なし",
-    "processing": "処理中..."
+    "title": "Collections",
+    "subtitle": "Digital Geometry Archives",
+    "newImport": "New Import",
+    "inventoryEmpty": "Inventory Empty",
+    "processing": "Processing..."
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "language": "Language",
+    "accountProfile": "Account & Profile"
   },
   "viewer": {
-    "wireframe": "ワイヤーフレーム",
-    "grid": "グリッド",
-    "spin": "回転"
+    "wireframe": "WIREFRAME",
+    "grid": "GRID",
+    "spin": "SPIN"
   }
 }

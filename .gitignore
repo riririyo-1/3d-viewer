@@ -4,6 +4,7 @@ node_modules/
 .pnp.js
 
 # Amplify
+client_secret_*.json
 .amplify/
 amplify_outputs*
 amplifyconfiguration*

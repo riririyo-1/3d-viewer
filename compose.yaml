@@ -71,6 +71,21 @@ services:
       minio:
         condition: service_healthy
 
+  prisma-studio:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    env_file:
+      - ./server/.env
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/studio_view
+    command: pnpm prisma studio --hostname 0.0.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+
   pipeline:
     build:
       context: ./pipeline
@@ -97,6 +112,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env.local
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4000}
     depends_on:
       - server
 

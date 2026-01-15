@@ -24,6 +24,7 @@ export class ConversionService {
     const job = await this.prisma.conversionJob.create({
       data: {
         userId,
+        assetId,
         originalName,
         originalType: 'obj',
         convertedName: convertedName,
