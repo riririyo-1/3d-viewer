@@ -482,8 +482,15 @@ jobs:
           GOOGLE_CLIENT_SECRET=test-client-secret
           GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
           EOF
+          
+          cat > frontend/.env.local << EOF
+          NEXT_PUBLIC_API_URL=http://localhost:4000
+          EOF
       - name: Build and Start Services
         run: docker compose up -d --build
+        env:
+          MINIO_ACCESS_KEY: minioadmin
+          MINIO_SECRET_KEY: minioadmin
       - name: Check Services Health/Status
         run: |
           echo "Waiting for services to be ready..."
