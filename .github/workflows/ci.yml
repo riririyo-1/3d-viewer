@@ -203,6 +203,9 @@ jobs:
           JWT_SECRET: test-secret
           PORT: 4000
           CORS_ORIGINS: http://localhost:3000
+          GOOGLE_CLIENT_ID: "test-client-id"
+          GOOGLE_CLIENT_SECRET: "test-client-secret"
+          GOOGLE_CALLBACK_URL: "http://localhost:3000/auth/google/callback"
       - name: Build Frontend
         run: pnpm run build
         env:
@@ -484,7 +487,7 @@ jobs:
       - name: Check Services Health/Status
         run: |
           echo "Waiting for services to be ready..."
-          sleep 30
+          sleep 60
           docker compose ps
           SERVICES=$(docker compose ps --services)
           for SERVICE in $SERVICES; do
