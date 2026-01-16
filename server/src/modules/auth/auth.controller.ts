@@ -48,7 +48,7 @@ export class AuthController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async googleAuth(@Req() _req: any) {}
 
-  @Get('google/callback')
+  @Get('callback/google')
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: any, @Res() res: any) {
     const user = await this.authService.validateGoogleUser(req.user);

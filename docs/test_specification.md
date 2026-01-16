@@ -66,7 +66,6 @@
 | **Integration Test Startup** | CI 上で `docker compose up` がエラーなく完了すること。 | ✅ |
 | **Service Health Checks** | DB, Redis, MinIO, Server, Frontend, Pipeline 全てが 60秒以内に `healthy` ステータスになること。 | ✅ |
 | **Env Injection: Server** | `server/.env` が CI ステップで正しく生成されていること。 | ✅ |
-| **Env Injection: Frontend** | `frontend/.env.local` が CI ステップで正しく生成されていること。 | ✅ |
 | **Env Injection: Compose** | `docker compose` 実行時に `MINIO_ACCESS_KEY` 等の変数が置換されていること。 | ✅ |
 | **Docker Builds** | Frontend, Server, Pipeline の Docker イメージビルドが成功すること。 | ✅ |
 | **Optimization** | `pipeline` のビルドコンテキストから不要ファイル（`__pycache__` 等）が除外されていること。 | ✅ |

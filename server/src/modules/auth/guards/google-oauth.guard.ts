@@ -8,7 +8,7 @@ export class GoogleOauthGuard extends AuthGuard('google') {
     // Dynamically construct callback URL based on the request host
     // This allows the app to work on localhost, LAN IP, or public domain without changing code
     const host = request.get('host');
-    const callbackURL = `http://${host}/api/auth/google/callback`;
+    const callbackURL = `http://${host}/api/auth/callback/google`;
 
     return {
       accessType: 'offline',

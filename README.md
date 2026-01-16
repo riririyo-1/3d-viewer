@@ -158,14 +158,6 @@ cp .env.example .env
 # .envファイルを編集して、JWT_SECRET、MINIO_ACCESS_KEY、MINIO_SECRET_KEYを変更
 ```
 
-**フロントエンド（frontend）**
-
-```bash
-cd frontend
-cp .env.example .env.local
-# 必要に応じて NEXT_PUBLIC_API_URL を設定
-```
-
 ### 2. Docker Compose で起動
 
 ```bash

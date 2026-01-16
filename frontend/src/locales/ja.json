@@ -49,10 +49,21 @@
     "processing": "Processing..."
   },
   "settings": {
-    "title": "Settings",
-    "account": "Account",
-    "language": "Language",
-    "accountProfile": "Account & Profile"
+    "title": "設定",
+    "account": "アカウント",
+    "language": "言語",
+    "accountProfile": "アカウントとプロフィール",
+    "plan": "プラン",
+    "storage": "ストレージ",
+    "current": "現在",
+    "freePlan": "無料プラン",
+    "proPlan": "プロプラン",
+    "freeTierDesc": "基本機能が使える無料プラン",
+    "of": "/",
+    "id": "ID",
+    "guestUser": "ゲストユーザー",
+    "unitedStates": "アメリカ合衆国",
+    "japanese": "日本語"
   },
   "viewer": {
     "wireframe": "WIREFRAME",

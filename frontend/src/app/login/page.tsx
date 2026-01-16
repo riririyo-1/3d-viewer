@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { api } from "@/lib/api";
+import { api, API_URL } from "@/lib/api";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -99,7 +99,7 @@ export default function LoginPage() {
         </div>
 
         <button
-          onClick={() => window.location.href = 'http://localhost:4000/auth/google'}
+          onClick={() => window.location.href = `${API_URL}/auth/google`}
           type="button"
           className="flex w-full items-center justify-center rounded-full border border-gray-300 bg-white py-3 font-medium text-gray-700 transition-transform hover:scale-105 hover:bg-gray-50 hover:shadow-lg"
         >
