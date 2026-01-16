@@ -1,12 +1,13 @@
 ## チャット・アシスト・エージェント
 
 - 日本語で
+- 丁寧語で
 
 ## ドキュメント作成ルール
 
 - README.md は{project root}に配置
-- その他のドキュメントの保存先は、{project root}/docs 配下
-- 語尾は断定形で
+- その他のドキュメントの保存先は、{project root}/docs 配下に作成
+- 語尾は断定形で記載
 
 ## コーディングルール
 
@@ -20,18 +21,17 @@
 - 環境変数は`.env`で管理
 
 ## python
-
+- brew or winget/pyenv を利用
 - 3.12 を利用
+- uv を利用
 
 ## Next.js 開発ルール
-
 - App Router を使用
 - TypeScript 必須
 - pnpm をパッケージマネージャーとして使用
 - `frontend/src/app`にページ、`frontend/src/components`にコンポーネント配置
 - Server Components と Client Components を適切に使い分け
 - any 型は禁止
-
 - 推奨ツール
   - Next.js (React フレームワーク)
   - TypeScript (JavaScript のスーパーセット)
@@ -72,3 +72,4 @@
 
 Windows パスを ubuntu のマウントディレクトリパスに変換：
 `C:\Users\user1\Pictures\image.jpg` → `/mnt/c/user1/Pictures/image.jpg`
+

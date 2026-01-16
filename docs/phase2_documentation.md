@@ -586,12 +586,12 @@ docker compose ps
 | **Frontend Login**      | <http://localhost:3000/login>                      | Username: `test@example.com` <br>Password: `test1234`   |
 | **Server API 情報**     | <http://localhost:4000>                            | エンドポイント一覧表示                                  |
 | **Server Swagger UI**   | <http://localhost:4000/api>                        | API ドキュメント（OpenAPI）                             |
-| **Server Health**       | <http://localhost:4000/health>                     | ヘルスチェック                                          |
+| **Server Health**       | <http://localhost:4000/api/health>                 | ヘルスチェック                                          |
 | **Pipeline API 情報**   | <http://localhost:8000>                            | エンドポイント一覧表示                                  |
 | **Pipeline Swagger UI** | <http://localhost:8000/docs>                       | API ドキュメント（OpenAPI）                             |
 | **Pipeline Health**     | <http://localhost:8000/health/>                    | ヘルスチェック                                          |
-| **Prisma Studio**       | <http://localhost:5555>                            | DB 管理画面（`cd server && pnpm prisma:studio` で起動） |
-| **MinIO Console**       | <http://localhost:9001/browser/studio-view-assets> | Username: `minioadmin` <br> Password: `minioadmin`      |
+| **Prisma Studio**       | <http://localhost:5555>                            | DB 管理画面 |
+| **MinIO Console**       | <http://localhost:9001/browser/studio-view-assets> | API: 9000、web console: 9001<br>Username: `minioadmin` <br> Password: `minioadmin`      |
 | **PostgreSQL**          | localhost:5432                                     | データベース接続（CLI）                                 |
 | **Redis**               | localhost:6379                                     | キャッシュ・ジョブキュー接続（CLI）                     |
 
@@ -600,7 +600,7 @@ docker compose ps
 **ユーザー登録:**
 
 ```bash
-curl -X POST http://localhost:4000/auth/register \
+curl -X POST http://localhost:4000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"test1234"}'
 ```
@@ -616,7 +616,7 @@ curl -X POST http://localhost:4000/auth/register \
 **ログイン:**
 
 ```bash
-curl -X POST http://localhost:4000/auth/login \
+curl -X POST http://localhost:4000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"test1234"}'
 ```
@@ -641,15 +641,6 @@ DATABASE_URL="postgresql://user:password@localhost:5432/studio_view"
 # 例: http://localhost:3000,http://100.76.140.55:3000
 # ワイルドカード使用可: http://100.76.140.*:3000
 CORS_ORIGINS="http://localhost:3000,http://100.76.140.55:3000"
-```
-
-### フロントエンド (frontend/.env.local)
-
-```env
-# API URL設定
-# ローカル開発時は設定不要（自動的にブラウザのホストから推測される）
-# 特定のURLを指定したい場合のみ設定
-# NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
 **動的 API URL 設定の動作:**

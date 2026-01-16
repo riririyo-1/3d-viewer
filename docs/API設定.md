@@ -4,6 +4,7 @@
 
 ```yaml
 openapi: 3.0.3
+
 info:
   title: Studio View API
   version: 1.0.0
@@ -12,7 +13,7 @@ info:
 servers:
   - url: http://localhost:4000/api
     description: ローカル開発環境
-  - url: https://api.studio-view.example.com/api
+  - url: https://api.studio-view.com/api
     description: 本番環境
 
 components:

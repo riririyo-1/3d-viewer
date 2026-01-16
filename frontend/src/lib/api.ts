@@ -2,11 +2,13 @@ import axios from "axios";
 
 // -- API URLを動的に設定 --------------
 // 環境変数が設定されていればそれを使用、なければブラウザのホストから推測
-export const API_URL =
+const baseUrl =
   process.env.NEXT_PUBLIC_API_URL ||
   (typeof window !== "undefined"
     ? `${window.location.protocol}//${window.location.hostname}:4000`
     : "http://localhost:4000");
+
+export const API_URL = baseUrl.endsWith("/api") ? baseUrl : `${baseUrl}/api`;
 
 export const api = axios.create({
   baseURL: API_URL,

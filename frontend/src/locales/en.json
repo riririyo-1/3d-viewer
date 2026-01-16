@@ -17,7 +17,18 @@
     "title": "Settings",
     "account": "Account",
     "language": "Language",
-    "accountProfile": "Account & Profile"
+    "accountProfile": "Account & Profile",
+    "plan": "Plan",
+    "storage": "Storage",
+    "current": "Current",
+    "freePlan": "Free Plan",
+    "proPlan": "Pro Plan",
+    "freeTierDesc": "Free tier with basic features",
+    "of": "of",
+    "id": "ID",
+    "guestUser": "Guest User",
+    "unitedStates": "United States",
+    "japanese": "Japanese"
   },
   "home": {
     "title1": "Visionary",

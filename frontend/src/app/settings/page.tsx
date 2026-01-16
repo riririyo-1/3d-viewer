@@ -16,7 +16,10 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("account");
 
   // Real data from AuthContext
-  const plan = user?.plan === "pro" ? "Pro Plan" : "Free Plan";
+  const plan =
+    user?.plan === "pro"
+      ? t("settings.proPlan") || "Pro Plan"
+      : t("settings.freePlan") || "Free Plan";
   
   const formatBytes = (bytes: string | number) => {
     const value = typeof bytes === "string" ? parseInt(bytes, 10) : bytes;
@@ -109,10 +112,10 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <p className="font-bold text-slate-900">
-                      {user?.email || "Guest User"}
+                      {user?.email || t("settings.guestUser") || "Guest User"}
                     </p>
                     <p className="text-xs text-slate-400 font-medium mt-1">
-                      ID: {user?.id || "N/A"}
+                      {t("settings.id") || "ID"}: {user?.id || "N/A"}
                     </p>
                   </div>
                 </div>
@@ -120,17 +123,18 @@ export default function SettingsPage() {
                 {/* Plan */}
                 <div>
                   <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest mb-4 flex items-center gap-2">
-                    <CreditCard size={14} /> Plan
+                    <CreditCard size={14} /> {t("settings.plan") || "Plan"}
                   </h3>
                   <div className="bg-white border-2 border-slate-100 rounded-xl p-5 flex items-center justify-between hover:border-blue-200 transition-colors cursor-pointer group">
                     <div>
                       <p className="font-bold text-slate-900">{plan}</p>
                       <p className="text-xs text-slate-500 mt-1">
-                        Free tier with basic features
+                        {t("settings.freeTierDesc") ||
+                          "Free tier with basic features"}
                       </p>
                     </div>
                     <div className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase rounded-full">
-                      Current
+                      {t("settings.current") || "Current"}
                     </div>
                   </div>
                 </div>
@@ -138,7 +142,7 @@ export default function SettingsPage() {
                 {/* Storage */}
                 <div>
                   <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest mb-4 flex items-center gap-2">
-                    <HardDrive size={14} /> Storage
+                    <HardDrive size={14} /> {t("settings.storage") || "Storage"}
                   </h3>
                   <div className="bg-white border-2 border-slate-100 rounded-xl p-6">
                     <div className="flex justify-between items-end mb-2">
@@ -146,7 +150,7 @@ export default function SettingsPage() {
                         {storageUsed}
                       </p>
                       <p className="text-xs font-bold text-slate-400 mb-1">
-                        of {storageLimit}
+                        {t("settings.of") || "of"} {storageLimit}
                       </p>
                     </div>
                     <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -189,7 +193,9 @@ export default function SettingsPage() {
                       >
                         English
                       </p>
-                      <p className="text-xs text-slate-500">United States</p>
+                      <p className="text-xs text-slate-500">
+                        {t("settings.unitedStates") || "United States"}
+                      </p>
                     </div>
                   </div>
                   {locale === "en" && (
@@ -217,7 +223,9 @@ export default function SettingsPage() {
                       >
                         日本語
                       </p>
-                      <p className="text-xs text-slate-500">Japanese</p>
+                      <p className="text-xs text-slate-500">
+                        {t("settings.japanese") || "Japanese"}
+                      </p>
                     </div>
                   </div>
                   {locale === "ja" && (

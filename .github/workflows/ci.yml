@@ -5,6 +5,7 @@ on:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,10 +18,10 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      server: ${{ steps.filter.outputs.server }}
-      pipeline: ${{ steps.filter.outputs.pipeline }}
-      docker: ${{ steps.filter.outputs.docker }}
+      frontend: ${{ steps.filter.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
+      server: ${{ steps.filter.outputs.server == 'true' || github.event_name == 'workflow_dispatch' }}
+      pipeline: ${{ steps.filter.outputs.pipeline == 'true' || github.event_name == 'workflow_dispatch' }}
+      docker: ${{ steps.filter.outputs.docker == 'true' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -42,6 +43,7 @@ jobs:
   frontend-lint:
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -77,6 +79,7 @@ jobs:
   frontend-unit-test:
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -110,6 +113,7 @@ jobs:
   frontend-e2e-test:
     needs: changes
     if: ${{ needs.changes.outputs.frontend == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -199,6 +203,9 @@ jobs:
           JWT_SECRET: test-secret
           PORT: 4000
           CORS_ORIGINS: http://localhost:3000
+          GOOGLE_CLIENT_ID: "test-client-id"
+          GOOGLE_CLIENT_SECRET: "test-client-secret"
+          GOOGLE_REDIRECT_URI: "http://localhost:3000/auth/google/callback"
       - name: Build Frontend
         run: pnpm run build
         env:
@@ -226,6 +233,7 @@ jobs:
   backend-lint:
     needs: changes
     if: ${{ needs.changes.outputs.server == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -269,6 +277,7 @@ jobs:
   backend-unit-test:
     needs: changes
     if: ${{ needs.changes.outputs.server == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -306,6 +315,7 @@ jobs:
   backend-e2e-test:
     needs: changes
     if: ${{ needs.changes.outputs.server == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -379,9 +389,9 @@ jobs:
         run: pnpm test:e2e
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
-          GOOGLE_CLIENT_ID: "test-client-id"
-          GOOGLE_CLIENT_SECRET: "test-client-secret"
-          GOOGLE_CALLBACK_URL: "http://localhost:3000/auth/google/callback"
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
           REDIS_HOST: localhost
           REDIS_PORT: 6379
           MINIO_ENDPOINT: localhost
@@ -394,6 +404,7 @@ jobs:
   pipeline-lint:
     needs: changes
     if: ${{ needs.changes.outputs.pipeline == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -422,6 +433,7 @@ jobs:
   pipeline-test:
     needs: changes
     if: ${{ needs.changes.outputs.pipeline == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -465,13 +477,19 @@ jobs:
           PORT=4000
           JWT_SECRET=test-secret-key-for-ci-environment
           CORS_ORIGINS=http://localhost:3000
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }} # Ensure Secret matches http://localhost:4000/api/auth/callback/google
           EOF
       - name: Build and Start Services
         run: docker compose up -d --build
+        env:
+          MINIO_ACCESS_KEY: minioadmin
+          MINIO_SECRET_KEY: minioadmin
       - name: Check Services Health/Status
         run: |
           echo "Waiting for services to be ready..."
-          sleep 30
+          sleep 60
           docker compose ps
           SERVICES=$(docker compose ps --services)
           for SERVICE in $SERVICES; do
@@ -500,6 +518,7 @@ jobs:
 
       - name: Build Frontend Image
         if: ${{ needs.changes.outputs.frontend == 'true' || needs.changes.outputs.docker == 'true' }}
+
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
@@ -509,6 +528,7 @@ jobs:
 
       - name: Build Server Image
         if: ${{ needs.changes.outputs.server == 'true' || needs.changes.outputs.docker == 'true' }}
+
         uses: docker/build-push-action@v5
         with:
           context: ./server
@@ -518,6 +538,7 @@ jobs:
 
       - name: Build Pipeline Image
         if: ${{ needs.changes.outputs.pipeline == 'true' || needs.changes.outputs.docker == 'true' }}
+
         uses: docker/build-push-action@v5
         with:
           context: ./pipeline
