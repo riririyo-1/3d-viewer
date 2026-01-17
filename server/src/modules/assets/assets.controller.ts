@@ -25,6 +25,9 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { AssetResponseDto } from './dto/asset-response.dto';
+import { CreateAssetInputDto } from './dto/input/create-asset.input.dto';
+import { CreateAssetOutputDto } from './dto/output/create-asset.output.dto';
 
 @ApiTags('assets')
 @ApiBearerAuth()
@@ -48,7 +51,7 @@ export class AssetsController {
     },
   })
   @UseInterceptors(FileInterceptor('file'))
-  create(
+  async create(
     @CurrentUser() user: RequestUser,
     @UploadedFile(
       new ParseFilePipe({
@@ -58,8 +61,26 @@ export class AssetsController {
       }),
     )
     file: Express.Multer.File,
-  ) {
-    return this.assetsService.create(user.id, file);
+  ): Promise<AssetResponseDto> {
+    const input: CreateAssetInputDto = {
+      userId: user.id,
+      file,
+    };
+    const output = await this.assetsService.create(input);
+    return this.mapToResponseDto(output);
+  }
+
+  private mapToResponseDto(output: CreateAssetOutputDto): AssetResponseDto {
+    return {
+      id: output.id,
+      name: output.name,
+      type: output.type,
+      size: output.size,
+      storagePath: output.storagePath,
+      thumbnailUrl: output.thumbnailUrl,
+      createdAt: output.createdAt,
+      downloadUrl: `/assets/${output.id}/file`,
+    };
   }
 
   @Get()

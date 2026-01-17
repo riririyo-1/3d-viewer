@@ -12,6 +12,8 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { ConversionService } from '../conversion/conversion.service';
 import { AssetResponseDto } from './dto/asset-response.dto';
+import { CreateAssetInputDto } from './dto/input/create-asset.input.dto';
+import { CreateAssetOutputDto } from './dto/output/create-asset.output.dto';
 import { Readable } from 'stream';
 
 @Injectable()
@@ -24,11 +26,9 @@ export class AssetsService {
     private conversionService: ConversionService,
   ) {}
 
-  async create(
-    userId: string,
-    file: Express.Multer.File,
-    options?: { skipAutoConversion?: boolean },
-  ): Promise<AssetResponseDto> {
+  async create(input: CreateAssetInputDto): Promise<CreateAssetOutputDto> {
+    const { userId, file, options } = input;
+
     if (!file) {
       throw new BadRequestException('File is required');
     }
@@ -72,7 +72,7 @@ export class AssetsService {
       );
     }
 
-    return this.mapToResponse(asset);
+    return this.mapToOutputDto(asset);
   }
 
   async findAll(userId: string): Promise<AssetResponseDto[]> {
@@ -128,6 +128,29 @@ export class AssetsService {
     });
 
     return { message: 'Asset deleted successfully' };
+  }
+
+  private mapToOutputDto(asset: {
+    id: string;
+    userId: string;
+    name: string;
+    type: string;
+    size: bigint;
+    storagePath: string;
+    thumbnailUrl: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }): CreateAssetOutputDto {
+    return {
+      id: asset.id,
+      name: asset.name,
+      type: asset.type,
+      size: Number(asset.size),
+      storagePath: asset.storagePath,
+      thumbnailUrl: asset.thumbnailUrl,
+      createdAt: asset.createdAt,
+      updatedAt: asset.updatedAt,
+    };
   }
 
   // -- BigIntをnumberに変換してJSON直列化可能にする --------------

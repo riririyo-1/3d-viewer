@@ -94,7 +94,8 @@ describe('AssetsService', () => {
       });
       mockConversionService.createJob.mockResolvedValue({});
 
-      const result = await service.create(userId, file);
+      // Pass input as DTO object
+      const result = await service.create({ userId, file });
 
       expect(mockMinioClient.putObject).toHaveBeenCalled();
       expect(mockPrismaService.asset.create).toHaveBeenCalled();
@@ -108,7 +109,8 @@ describe('AssetsService', () => {
         originalname: 'model.txt',
       } as Express.Multer.File;
 
-      await expect(service.create(userId, file)).rejects.toThrow(
+      // Pass input as DTO object
+      await expect(service.create({ userId, file })).rejects.toThrow(
         BadRequestException,
       );
     });
