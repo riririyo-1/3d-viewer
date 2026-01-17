@@ -75,8 +75,13 @@ export class ConversionController {
     }
 
     // 1. Upload Asset (Skip Auto Conversion)
-    const asset = await this.assetsService.create(user.id, file, {
-      skipAutoConversion: true,
+    // 1. Upload Asset (Skip Auto Conversion)
+    const asset = await this.assetsService.create({
+      userId: user.id,
+      file,
+      options: {
+        skipAutoConversion: true,
+      },
     });
 
     // 2. Create Conversion Job

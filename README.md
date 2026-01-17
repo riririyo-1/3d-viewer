@@ -168,6 +168,17 @@ docker compose up -d --build
 
 ```bash
 cd server
-pnpm exec prisma migrate deploy
 pnpm exec prisma db seed
 ```
+
+## GitHub Actions Secrets
+
+CI/CD パイプラインを正常に動作させるために、以下の Secrets をリポジトリに設定してください。
+
+| Secret Name | Description | Example |
+| :--- | :--- | :--- |
+| `POSTGRES_PASSWORD` | PostgreSQL password | `password` |
+| `MINIO_ROOT_USER` | MinIO root user | `minioadmin` |
+| `MINIO_ROOT_PASSWORD` | MinIO root password | `minioadmin` |
+| `DATABASE_URL` | Full database connection string | `postgresql://user:password@db:5432/studio_view` |
+| `NEXT_PUBLIC_API_URL` | API Base URL for Frontend | `https://api.your-domain.com` |

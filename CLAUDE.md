@@ -19,6 +19,7 @@
 - 行ごとのコメントは、インデントを揃え、コードの右側に端的に記載する
 - 関数同士は 2 行空けること
 - 環境変数は`.env`で管理
+- 新規ツールは出来る限りmac:brew, win:winget で入れること
 
 ## python
 - brew or winget/pyenv を利用
@@ -72,4 +73,3 @@
 
 Windows パスを ubuntu のマウントディレクトリパスに変換：
 `C:\Users\user1\Pictures\image.jpg` → `/mnt/c/user1/Pictures/image.jpg`
-
