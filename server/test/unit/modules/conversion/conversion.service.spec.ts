@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConversionService } from './conversion.service';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { ConversionService } from '@/modules/conversion/conversion.service';
+import { PrismaService } from '@/infrastructure/database/prisma.service';
 import { getQueueToken } from '@nestjs/bullmq';
 
 describe('ConversionService', () => {

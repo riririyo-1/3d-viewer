@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Sparkles, Layers, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -31,10 +32,10 @@ export default function Home() {
             {t("home.subtitle")}
           </p>
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-12 rounded-full bg-white/60 backdrop-blur-md border border-white shadow-sm text-[10px] font-black tracking-[0.3em] text-slate-500 uppercase">
+          <Badge className="mb-12 gap-2 bg-white/60 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 backdrop-blur-md hover:bg-white/80 border-white shadow-sm">
             <Sparkles size={12} className="text-blue-400" />
             {t("home.studioPerspective")}
-          </div>
+          </Badge>
         </div>
 
         {/* Feature Cards */}

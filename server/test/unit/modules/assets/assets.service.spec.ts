@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AssetsService } from './assets.service';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
-import { MinioService } from '../../infrastructure/storage/minio.service';
+import { AssetsService } from '@/modules/assets/assets.service';
+import { PrismaService } from '@/infrastructure/database/prisma.service';
+import { MinioService } from '@/infrastructure/storage/minio.service';
 import { ConfigService } from '@nestjs/config';
-import { ConversionService } from '../conversion/conversion.service';
+import { ConversionService } from '@/modules/conversion/conversion.service';
 import { BadRequestException } from '@nestjs/common';
 import { Readable } from 'stream';
 

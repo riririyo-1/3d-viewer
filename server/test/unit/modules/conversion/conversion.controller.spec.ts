@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConversionController } from './conversion.controller';
-import { AssetsService } from '../assets/assets.service';
-import { ConversionService } from './conversion.service';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { ConversionController } from '@/modules/conversion/conversion.controller';
+import { AssetsService } from '@/modules/assets/assets.service';
+import { ConversionService } from '@/modules/conversion/conversion.service';
+import { PrismaService } from '@/infrastructure/database/prisma.service';
 
 describe('ConversionController', () => {
   let controller: ConversionController;

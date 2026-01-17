@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SettingsController } from './settings.controller';
-import { SettingsService } from './settings.service';
+import { SettingsController } from '@/modules/settings/settings.controller';
+import { SettingsService } from '@/modules/settings/settings.service';
 
 describe('SettingsController', () => {
   let controller: SettingsController;
