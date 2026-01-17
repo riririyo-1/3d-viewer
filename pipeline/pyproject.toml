@@ -12,3 +12,14 @@ dependencies = [
     "requests>=2.32.5",
     "uvicorn>=0.40.0",
 ]
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "flake8>=7.3.0",
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "types-redis>=4.6.0.20241004",
+    "types-requests>=2.32.4.20260107",
+    "types-ujson>=5.10.0.20250822",
+]
