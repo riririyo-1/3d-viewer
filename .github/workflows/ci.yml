@@ -173,8 +173,8 @@ jobs:
       - name: Start MinIO
         run: |
           docker run -d -p 9000:9000 -p 9001:9001 --name minio \
-            -e MINIO_ROOT_USER=minioadmin \
-            -e MINIO_ROOT_PASSWORD=minioadmin \
+            -e MINIO_ROOT_USER=${{ secrets.MINIO_ACCESS_KEY }} \
+            -e MINIO_ROOT_PASSWORD=${{ secrets.MINIO_SECRET_KEY }} \
             minio/minio server /data --console-address ":9001"
           timeout 30s bash -c 'until curl -s http://localhost:9000/minio/health/live; do sleep 1; done'
       - name: Setup Backend Database
@@ -197,8 +197,8 @@ jobs:
           REDIS_PORT: 6379
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
-          MINIO_ACCESS_KEY: minioadmin
-          MINIO_SECRET_KEY: minioadmin
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
           MINIO_BUCKET_NAME: studio-view-assets
           JWT_SECRET: test-secret
           PORT: 4000
@@ -369,8 +369,8 @@ jobs:
       - name: Start Minio
         run: |
           docker run -d -p 9000:9000 -p 9001:9001 --name minio \
-            -e MINIO_ROOT_USER=minioadmin \
-            -e MINIO_ROOT_PASSWORD=minioadmin \
+            -e MINIO_ROOT_USER=${{ secrets.MINIO_ACCESS_KEY }} \
+            -e MINIO_ROOT_PASSWORD=${{ secrets.MINIO_SECRET_KEY }} \
             minio/minio server /data --console-address ":9001"
           timeout 30s bash -c 'until curl -s http://localhost:9000/minio/health/live; do sleep 1; done'
       - name: Prisma Generate
@@ -396,8 +396,8 @@ jobs:
           REDIS_PORT: 6379
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
-          MINIO_ACCESS_KEY: minioadmin
-          MINIO_SECRET_KEY: minioadmin
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
           MINIO_BUCKET_NAME: studio-view-assets
           JWT_SECRET: test-secret
 
@@ -478,8 +478,8 @@ jobs:
           MINIO_ENDPOINT=minio
           MINIO_PORT=9000
           MINIO_USE_SSL=false
-          MINIO_ACCESS_KEY=minioadmin
-          MINIO_SECRET_KEY=minioadmin
+          MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }}
           MINIO_BUCKET_NAME=studio-view-assets
           PIPELINE_API_URL=http://pipeline:8000
           PORT=4000
@@ -492,8 +492,8 @@ jobs:
       - name: Build and Start Services
         run: docker compose up -d --build
         env:
-          MINIO_ACCESS_KEY: minioadmin
-          MINIO_SECRET_KEY: minioadmin
+          MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
       - name: Check Services Health/Status
         run: |
           echo "Waiting for services to be ready..."
