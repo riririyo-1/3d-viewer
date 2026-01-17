@@ -13,10 +13,14 @@ dependencies = [
     "uvicorn>=0.40.0",
 ]
 
+[tool.pytest.ini_options]
+pythonpath = "."
+
 [dependency-groups]
 dev = [
     "black>=25.12.0",
     "flake8>=7.3.0",
+    "httpx>=0.28.1",
     "mypy>=1.19.1",
     "pytest>=9.0.2",
     "types-redis>=4.6.0.20241004",

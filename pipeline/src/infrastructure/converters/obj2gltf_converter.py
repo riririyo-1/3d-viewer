@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 
 class Obj2GltfConverter:

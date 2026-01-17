@@ -14,6 +14,8 @@ amplify/environments/
 frontend/.next/
 frontend/out/
 frontend/.env*.local
+frontend/test/e2e/report/
+frontend/test/e2e/results/week
 
 # Environment variables
 .env
