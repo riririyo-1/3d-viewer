@@ -487,6 +487,9 @@ jobs:
 
           # Create server/.env
           cat > server/.env <<EOF
+          POSTGRES_USER=user
+          POSTGRES_PASSWORD=password
+          POSTGRES_DB=studio_view
           DATABASE_URL=postgresql://user:password@db:5432/studio_view
           REDIS_HOST=redis
           REDIS_PORT=6379
