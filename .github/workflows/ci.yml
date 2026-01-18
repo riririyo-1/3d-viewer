@@ -460,7 +460,7 @@ jobs:
       - name: Create .env files for CI
         run: |
           # Create root .env for Docker Compose
-          cat > .env << EOF
+          cat > .env <<EOF
           POSTGRES_USER=user
           POSTGRES_PASSWORD=password
           POSTGRES_DB=studio_view
@@ -469,26 +469,45 @@ jobs:
           MINIO_BUCKET_NAME=studio-view-assets
           NEXT_PUBLIC_API_URL=http://localhost:4000
           EOF
-          
-          # Create server/.env (kept for safety/consistency)
-          cat > server/.env << EOF
+          sed -i '/^[[:space:]]*$/d; s/^[[:space:]]*//' .env
+
+          # Create pipeline/.env
+          cat > pipeline/.env <<EOF
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          MINIO_ENDPOINT=minio
+          MINIO_PORT=9000
+          MINIO_USE_SSL=false
+          MINIO_BUCKET_NAME=studio-view-assets
+          API_PORT=8000
+          MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }}
+          EOF
+          sed -i '/^[[:space:]]*$/d; s/^[[:space:]]*//' pipeline/.env
+
+          # Create server/.env
+          cat > server/.env <<EOF
+          POSTGRES_USER=user
+          POSTGRES_PASSWORD=password
+          POSTGRES_DB=studio_view
           DATABASE_URL=postgresql://user:password@db:5432/studio_view
           REDIS_HOST=redis
           REDIS_PORT=6379
           MINIO_ENDPOINT=minio
           MINIO_PORT=9000
           MINIO_USE_SSL=false
-          MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }}
-          MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }}
           MINIO_BUCKET_NAME=studio-view-assets
           PIPELINE_API_URL=http://pipeline:8000
           PORT=4000
           JWT_SECRET=test-secret-key-for-ci-environment
           CORS_ORIGINS=http://localhost:3000
+          MINIO_ACCESS_KEY=${{ secrets.MINIO_ACCESS_KEY }}
+          MINIO_SECRET_KEY=${{ secrets.MINIO_SECRET_KEY }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
           EOF
+          sed -i '/^[[:space:]]*$/d; s/^[[:space:]]*//' server/.env
       - name: Build and Start Services
         run: docker compose up -d --build
         env:

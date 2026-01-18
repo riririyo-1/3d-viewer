@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { locales, defaultLocale, type Locale } from "./i18n";
+import { locales, defaultLocale, type Locale } from '@/lib/i18n';
 
 describe("i18n", () => {
   describe("locales", () => {

@@ -1,25 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SettingsService } from './settings.service';
-import { PrismaService } from '../../infrastructure/database/prisma.service';
+import { HistoryService } from '@/modules/history/history.service';
+import { PrismaService } from '@/infrastructure/database/prisma.service';
 
-describe('SettingsService', () => {
-  let service: SettingsService;
+describe('HistoryService', () => {
+  let service: HistoryService;
 
   const mockPrismaService = {
-    user: {
-      update: jest.fn(),
+    recentHistory: {
+      findMany: jest.fn(),
+      upsert: jest.fn(),
     },
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SettingsService,
+        HistoryService,
         { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
-    service = module.get<SettingsService>(SettingsService);
+    service = module.get<HistoryService>(HistoryService);
   });
 
   it('should be defined', () => {

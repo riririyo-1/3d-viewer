@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useAppStore, type Asset } from "./store";
+import { useAppStore, type Asset } from '@/lib/store';
 
 // テスト用のモックアセット作成関数
 const createMockAsset = (id: string, name: string): Asset => ({

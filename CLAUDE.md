@@ -37,7 +37,7 @@
   - Next.js (React フレームワーク)
   - TypeScript (JavaScript のスーパーセット)
   - Tailwind CSS (ユーティリティファースト CSS フレームワーク)
-  - shadcn/ui (Radix UI ベースの UI コンポーネントライブラリ)
+  - shadcn (Radix UI ベースの UI コンポーネントライブラリ)
   - framer-motion (React アニメーションライブラリ)
   - next-themes (Next.js 用のテーマ切り替えライブラリ)
   - i18n 対応（ライブラリではなく、local/en.json, ja.json ファイルで管理）
