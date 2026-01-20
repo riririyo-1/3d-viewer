@@ -6,7 +6,7 @@ export interface Asset {
   type: string;
   data: string | ArrayBuffer | null;
   url?: string;
-  thumbnailUrl?: string; // Add thumbnailUrl locally as well
+  thumbnailUrl?: string | null; // Add thumbnailUrl locally as well
   storagePath?: string;
   timestamp: string;
 }

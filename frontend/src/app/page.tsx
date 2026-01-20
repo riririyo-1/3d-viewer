@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Sparkles, Layers, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Badge } from "@/components/ui/badge";
+import { GlowCard } from "@/components/ui/glow-card";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -40,13 +41,13 @@ export default function Home() {
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300 ease-out pb-24">
-          <Link
-            href="/collection"
-            className="group relative p-1 rounded-[2.8rem] bg-gradient-to-b from-white to-slate-100 shadow-2xl transition-all duration-500 hover:scale-[1.03] active:scale-95 text-center flex flex-col items-center"
-          >
-            <div className="bg-white rounded-[2.7rem] p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+          <GlowCard asChild className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-2xl active:scale-95 text-center flex flex-col items-center">
+            <Link
+              href="/collection"
+            >
+            <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="w-20 h-20 bg-slate-900 rounded-[1.8rem] flex items-center justify-center text-white mb-8 group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-700 shadow-2xl shadow-slate-900/30">
+              <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 transition-all duration-700 shadow-2xl shadow-slate-900/30">
                 <Layers size={36} />
               </div>
               <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic">
@@ -63,15 +64,16 @@ export default function Home() {
                 />
               </div>
             </div>
-          </Link>
+            </Link>
+          </GlowCard>
 
-          <Link
-            href="/conversion"
-            className="group relative p-1 rounded-[2.8rem] bg-gradient-to-b from-white to-slate-100 shadow-xl transition-all duration-500 hover:scale-[1.03] active:scale-95 text-center flex flex-col items-center"
-          >
-            <div className="bg-white rounded-[2.7rem] p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+          <GlowCard asChild className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-xl active:scale-95 text-center flex flex-col items-center">
+            <Link
+              href="/conversion"
+            >
+            <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="w-20 h-20 bg-slate-100 rounded-[1.8rem] flex items-center justify-center text-indigo-400 mb-8 font-bold text-3xl group-hover:rotate-[-10deg] group-hover:scale-110 transition-all duration-700">
+              <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 font-bold text-3xl transition-all duration-700">
                 🔄
               </div>
               <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
@@ -88,7 +90,8 @@ export default function Home() {
                 />
               </div>
             </div>
-          </Link>
+            </Link>
+          </GlowCard>
         </div>
       </div>
     </main>
