@@ -292,10 +292,8 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
       }
       if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current);
 
-      // Cleanup Three.js resources
-      renderer.dispose();
     };
-  }, [asset, settings.showGrid, settings.wireframe]); // Re-init on asset change
+  }, [asset]); // Re-init on asset change
 
   // Update settings without re-init
   useEffect(() => {

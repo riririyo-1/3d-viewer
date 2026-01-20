@@ -10,7 +10,7 @@ test("displays collection page title", async ({ page }) => {
 
   // Verify either empty state message or the grid container is present
   const gridContainer = page.locator(
-    'div.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4'
+    'div.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-2.xl\\:grid-cols-3'
   );
   await expect(gridContainer).toBeVisible();
 });
