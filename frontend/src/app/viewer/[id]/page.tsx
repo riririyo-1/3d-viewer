@@ -4,6 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { Maximize, Grid3X3, Rotate3d, ArrowLeft } from "lucide-react";
 import { ViewerCanvas } from "@/components/three/ViewerCanvas";
+import { SharePopover } from "@/components/features/share/SharePopover";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { cn } from "@/lib/utils";
 import { api, API_URL } from "@/lib/api";
@@ -75,13 +76,21 @@ export default function ViewerPage({ params }: ViewerPageProps) {
 
   return (
     <div className="fixed inset-0 z-0 bg-white animate-in fade-in duration-1000">
-      <div className="absolute top-6 left-6 z-50">
+      <div className="absolute top-6 left-6 z-50 flex gap-4">
         <button
           onClick={() => router.push("/collection")}
-          className="bg-white/80 backdrop-blur-md p-3 rounded-full shadow-lg hover:scale-105 transition-all text-slate-900"
+          className="bg-white/80 backdrop-blur-md p-3 rounded-full shadow-lg hover:scale-105 transition-all text-slate-900 flex items-center justify-center w-12 h-12"
         >
           <ArrowLeft size={20} />
         </button>
+      </div>
+
+      <div className="absolute top-6 right-6 z-50">
+        {asset && (
+          <div className="bg-white/80 backdrop-blur-md p-2 rounded-full shadow-lg hover:scale-105 transition-all w-12 h-12 flex items-center justify-center">
+            <SharePopover assetId={asset.id} assetName={asset.name} />
+          </div>
+        )}
       </div>
 
       <ViewerCanvas asset={asset} settings={settings} />
@@ -97,7 +106,7 @@ export default function ViewerPage({ params }: ViewerPageProps) {
                 "flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black tracking-widest transition-all uppercase",
                 settings.wireframe
                   ? "bg-white text-slate-900 shadow-xl"
-                  : "text-white/60 hover:text-white hover:bg-white/10"
+                  : "text-white/60 hover:text-white hover:bg-white/10",
               )}
             >
               <Maximize size={14} /> {t("viewer.wireframe")}
@@ -111,7 +120,7 @@ export default function ViewerPage({ params }: ViewerPageProps) {
                 "flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black tracking-widest transition-all uppercase",
                 settings.showGrid
                   ? "bg-white text-slate-900 shadow-xl"
-                  : "text-white/60 hover:text-white hover:bg-white/10"
+                  : "text-white/60 hover:text-white hover:bg-white/10",
               )}
             >
               <Grid3X3 size={14} /> {t("viewer.grid")}
@@ -125,7 +134,7 @@ export default function ViewerPage({ params }: ViewerPageProps) {
                 "flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black tracking-widest transition-all uppercase",
                 settings.autoRotate
                   ? "bg-white text-slate-900 shadow-xl"
-                  : "text-white/60 hover:text-white hover:bg-white/10"
+                  : "text-white/60 hover:text-white hover:bg-white/10",
               )}
             >
               <Rotate3d

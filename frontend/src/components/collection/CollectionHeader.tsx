@@ -13,19 +13,9 @@ export function CollectionHeader({ onFileUpload }: CollectionHeaderProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6 pt-4">
-      <div>
-        <h2 className="text-5xl font-black tracking-tighter text-slate-900 uppercase">
-          {t("collection.title")}
-        </h2>
-        <div className="h-1 w-12 bg-slate-900 mt-4 rounded-full" />
-        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em] mt-6">
-          {t("collection.subtitle")}
-        </p>
-      </div>
-
+    <div className="flex justify-end items-center mb-8 gap-6">
       <div className="flex gap-4">
-        <TabList className="flex items-center gap-1 bg-slate-100 p-1 rounded-full">
+        <TabList className="flex items-center gap-1 p-1 rounded-full">
           <Tab
             className={({ selected }) =>
               `p-3 rounded-full transition-all duration-300 outline-none ${

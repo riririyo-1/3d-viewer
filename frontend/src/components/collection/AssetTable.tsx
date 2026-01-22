@@ -5,6 +5,7 @@ import { Box, Trash2, Layers } from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 import { Asset } from "@/lib/store";
+import { SharePopover } from "@/components/features/share/SharePopover";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -12,7 +13,11 @@ interface AssetTableProps {
   onDelete: (id: string, e: React.MouseEvent) => void;
 }
 
-export function AssetTable({ assets, onAssetClick, onDelete }: AssetTableProps) {
+export function AssetTable({
+  assets,
+  onAssetClick,
+  onDelete,
+}: AssetTableProps) {
   const { t } = useLanguage();
 
   return (
@@ -74,12 +79,18 @@ export function AssetTable({ assets, onAssetClick, onDelete }: AssetTableProps) 
                 </span>
               </td>
               <td className="p-4 text-right">
-                <button
-                  onClick={(e) => onDelete(asset.id, e)}
-                  className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                <div
+                  className="flex justify-end gap-2 items-center"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <Trash2 size={16} />
-                </button>
+                  <SharePopover assetId={asset.id} assetName={asset.name} />
+                  <button
+                    onClick={(e) => onDelete(asset.id, e)}
+                    className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

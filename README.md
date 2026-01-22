@@ -82,8 +82,6 @@
 
 ## 技術スタック詳細
 
-詳細は [技術スタック完全ガイド](./docs/tech_stack.md) を参照
-
 ### フロントエンド技術
 
 - **フレームワーク**: Next.js 16.1.0 (App Router)
@@ -132,10 +130,12 @@
 2. バックエンド作成（ローカル立ち上げ版）
 3. 要件確定（ローカルで完成）
    1. 共有リンク生成機能
-   2. 高効率フォーマット変換機能
-   3. 座標データの高精度圧縮機能
-   4. 自動サムネイル生成機能
-   5. GLTF ファイルの編集機能
+   2. collectionの検索機能
+   3. 高効率フォーマット変換機能
+   4. 座標データの高精度圧縮機能
+   5. 自動サムネイル生成機能
+   6. GLTF ファイルの編集機能
+   7. 3Dプリンターとの接続へのUX検討
 4. GCP インフラ作成（terraform）
 5. 課金機能
    1. プラン作成
@@ -162,9 +162,14 @@ cp frontend/.env.example frontend/.env
 cp server/.env.example server/.env
 
 #### パイプライン
+
+```
 cp pipeline/.env.example pipeline/.env
+```
 
 #### フロントエンド
+
+```
 cp frontend/.env.example frontend/.env
 ```
 
@@ -189,61 +194,61 @@ pnpm exec prisma db seed
 
 Docker Compose で使用する共通設定。
 
-| 変数名 | 説明 | デフォルト値 |
-| :--- | :--- | :--- |
-| `POSTGRES_USER` | PostgreSQL ユーザー名 | `user` |
-| `POSTGRES_PASSWORD` | PostgreSQL パスワード | `password` |
-| `POSTGRES_DB` | PostgreSQL データベース名 | `studio_view` |
-| `MINIO_ROOT_USER` | MinIO 管理者ユーザー名 | `minioadmin` |
-| `MINIO_ROOT_PASSWORD` | MinIO 管理者パスワード | `minioadmin` |
+| 変数名                | 説明                           | デフォルト値            |
+| :-------------------- | :----------------------------- | :---------------------- |
+| `POSTGRES_USER`       | PostgreSQL ユーザー名          | `user`                  |
+| `POSTGRES_PASSWORD`   | PostgreSQL パスワード          | `password`              |
+| `POSTGRES_DB`         | PostgreSQL データベース名      | `studio_view`           |
+| `MINIO_ROOT_USER`     | MinIO 管理者ユーザー名         | `minioadmin`            |
+| `MINIO_ROOT_PASSWORD` | MinIO 管理者パスワード         | `minioadmin`            |
 | `NEXT_PUBLIC_API_URL` | フロントエンドから見た API URL | `http://localhost:4000` |
 
 ### バックエンド (server/.env)
 
-| 変数名 | 説明 | デフォルト値 |
-| :--- | :--- | :--- |
-| `PORT` | サーバーポート | `4000` |
-| `DATABASE_URL` | PostgreSQL 接続文字列 | - |
-| `REDIS_HOST` | Redis ホスト名 | `localhost` |
-| `REDIS_PORT` | Redis ポート | `6379` |
-| `MINIO_ENDPOINT` | MinIO エンドポイント | `localhost` |
-| `MINIO_PORT` | MinIO ポート | `9000` |
-| `MINIO_USE_SSL` | MinIO SSL 使用有無 | `false` |
-| `MINIO_ACCESS_KEY` | MinIO アクセスキー | `minioadmin` |
-| `MINIO_SECRET_KEY` | MinIO シークレットキー | `minioadmin` |
-| `MINIO_BUCKET_NAME` | MinIO バケット名 | `studio-view-assets` |
-| `PIPELINE_API_URL` | パイプライン API URL | `http://localhost:8000` |
-| `JWT_SECRET` | JWT 署名用シークレット | - |
-| `CORS_ORIGINS` | CORS 許可オリジン（カンマ区切り） | `http://localhost:3000` |
-| `GOOGLE_CLIENT_ID` | Google OAuth クライアント ID | - |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth クライアントシークレット | - |
-| `GOOGLE_REDIRECT_URI` | Google OAuth リダイレクト URI | - |
+| 変数名                 | 説明                                  | デフォルト値            |
+| :--------------------- | :------------------------------------ | :---------------------- |
+| `PORT`                 | サーバーポート                        | `4000`                  |
+| `DATABASE_URL`         | PostgreSQL 接続文字列                 | -                       |
+| `REDIS_HOST`           | Redis ホスト名                        | `localhost`             |
+| `REDIS_PORT`           | Redis ポート                          | `6379`                  |
+| `MINIO_ENDPOINT`       | MinIO エンドポイント                  | `localhost`             |
+| `MINIO_PORT`           | MinIO ポート                          | `9000`                  |
+| `MINIO_USE_SSL`        | MinIO SSL 使用有無                    | `false`                 |
+| `MINIO_ACCESS_KEY`     | MinIO アクセスキー                    | `minioadmin`            |
+| `MINIO_SECRET_KEY`     | MinIO シークレットキー                | `minioadmin`            |
+| `MINIO_BUCKET_NAME`    | MinIO バケット名                      | `studio-view-assets`    |
+| `PIPELINE_API_URL`     | パイプライン API URL                  | `http://localhost:8000` |
+| `JWT_SECRET`           | JWT 署名用シークレット                | -                       |
+| `CORS_ORIGINS`         | CORS 許可オリジン（カンマ区切り）     | `http://localhost:3000` |
+| `GOOGLE_CLIENT_ID`     | Google OAuth クライアント ID          | -                       |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth クライアントシークレット | -                       |
+| `GOOGLE_REDIRECT_URI`  | Google OAuth リダイレクト URI         | -                       |
 
 ### パイプライン (pipeline/.env)
 
-| 変数名 | 説明 | デフォルト値 |
-| :--- | :--- | :--- |
-| `API_PORT` | パイプライン API ポート | `8000` |
-| `REDIS_HOST` | Redis ホスト名 | `localhost` |
-| `REDIS_PORT` | Redis ポート | `6379` |
-| `MINIO_ENDPOINT` | MinIO エンドポイント | `localhost` |
-| `MINIO_PORT` | MinIO ポート | `9000` |
-| `MINIO_USE_SSL` | MinIO SSL 使用有無 | `false` |
-| `MINIO_ACCESS_KEY` | MinIO アクセスキー | `minioadmin` |
-| `MINIO_SECRET_KEY` | MinIO シークレットキー | `minioadmin` |
-| `MINIO_BUCKET_NAME` | MinIO バケット名 | `studio-view-assets` |
+| 変数名              | 説明                    | デフォルト値         |
+| :------------------ | :---------------------- | :------------------- |
+| `API_PORT`          | パイプライン API ポート | `8000`               |
+| `REDIS_HOST`        | Redis ホスト名          | `localhost`          |
+| `REDIS_PORT`        | Redis ポート            | `6379`               |
+| `MINIO_ENDPOINT`    | MinIO エンドポイント    | `localhost`          |
+| `MINIO_PORT`        | MinIO ポート            | `9000`               |
+| `MINIO_USE_SSL`     | MinIO SSL 使用有無      | `false`              |
+| `MINIO_ACCESS_KEY`  | MinIO アクセスキー      | `minioadmin`         |
+| `MINIO_SECRET_KEY`  | MinIO シークレットキー  | `minioadmin`         |
+| `MINIO_BUCKET_NAME` | MinIO バケット名        | `studio-view-assets` |
 
 ### フロントエンド (frontend/.env)
 
-| 変数名 | 説明 | デフォルト値 |
-| :--- | :--- | :--- |
+| 変数名                | 説明                 | デフォルト値            |
+| :-------------------- | :------------------- | :---------------------- |
 | `NEXT_PUBLIC_API_URL` | バックエンド API URL | `http://localhost:4000` |
 
 ## GitHub Actions Secrets
 
 CI/CD パイプラインを正常に動作させるために、以下の Secrets をリポジトリに設定する。
 
-| Secret 名 | 説明 | 用途 |
-| :--- | :--- | :--- |
-| `MINIO_ACCESS_KEY` | MinIO アクセスキー | テスト実行時の MinIO 認証 |
+| Secret 名          | 説明                   | 用途                      |
+| :----------------- | :--------------------- | :------------------------ |
+| `MINIO_ACCESS_KEY` | MinIO アクセスキー     | テスト実行時の MinIO 認証 |
 | `MINIO_SECRET_KEY` | MinIO シークレットキー | テスト実行時の MinIO 認証 |

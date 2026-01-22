@@ -65,6 +65,23 @@
     "inventoryEmpty": "Inventory Empty",
     "processing": "Processing..."
   },
+  "share": {
+    "title": "Share Management",
+    "subtitle": "Manage your public links",
+    "object": "Object",
+    "views": "Views",
+    "expires": "Expires",
+    "link": "Share Link",
+    "created": "Created",
+    "actions": "Actions",
+    "copySuccess": "Link copied to clipboard",
+    "deleteConfirm": "Are you sure you want to delete this share link?",
+    "deleteSuccess": "Link deleted successfully",
+    "deleteError": "Failed to delete link",
+    "loading": "Loading...",
+    "noLinks": "No share links found",
+    "unknown": "Unknown"
+  },
   "viewer": {
     "wireframe": "WIREFRAME",
     "grid": "GRID",

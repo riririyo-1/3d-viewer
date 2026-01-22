@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
+import { PageContainer } from "@/components/layout/PageContainer";
 import {
-  ChevronLeft,
   Upload,
   FileType,
   Check,
@@ -11,53 +10,30 @@ import {
   Download,
   AlertCircle,
   Loader2,
-} from "lucide-react"; // Import Loader2
+} from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 
 export default function ConversionPage() {
   const { t } = useLanguage();
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col pt-32 px-6 overflow-hidden bg-white">
-      {/* Background Animation Blobs */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-100/40 rounded-full blur-[120px] animate-blob" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-100/30 rounded-full blur-[120px] animate-blob animation-delay-2000" />
+    <PageContainer
+      title={t("conversion.title") || "Conversion"}
+      subtitle={t("conversion.subtitle") || "Format Transformation Pipeline"}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-24">
+        <ConversionPanel
+          title={t("conversion.objToGlb") || "OBJ → GLB"}
+          targetFormat="glb"
+          t={t}
+        />
+        <ConversionPanel
+          title={t("conversion.objToGltf") || "OBJ → GLTF"}
+          targetFormat="gltf"
+          t={t}
+        />
       </div>
-
-      <div className="relative z-10 w-full max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-colors mb-6 text-sm font-medium"
-          >
-            <ChevronLeft size={16} />
-            {t("common.studio") || "Studio"}
-          </Link>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-2">
-            {t("conversion.title") || "Conversion"}
-          </h1>
-          <p className="text-slate-500 font-medium">
-            {t("conversion.subtitle") || "Format Transformation Pipeline"}
-          </p>
-        </div>
-
-        {/* Conversion Panels */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-24">
-          <ConversionPanel
-            title={t("conversion.objToGlb") || "OBJ → GLB"}
-            targetFormat="glb"
-            t={t}
-          />
-          <ConversionPanel
-            title={t("conversion.objToGltf") || "OBJ → GLTF"}
-            targetFormat="gltf"
-            t={t}
-          />
-        </div>
-      </div>
-    </main>
+    </PageContainer>
   );
 }
 
@@ -122,9 +98,8 @@ function ConversionPanel({
 
     try {
       // 1. Upload and Start Conversion
-      const { uploadAndConvert, checkConversionStatus } = await import(
-        "@/lib/api"
-      );
+      const { uploadAndConvert, checkConversionStatus } =
+        await import("@/lib/api");
       const initialResponse = await uploadAndConvert(file, targetFormat);
 
       const jobId = initialResponse.conversionJobId;
@@ -177,7 +152,7 @@ function ConversionPanel({
       setErrorMessage(
         error.response?.data?.message ||
           error.message ||
-          "Failed to start conversion."
+          "Failed to start conversion.",
       );
     }
   };
@@ -291,7 +266,7 @@ function ConversionPanel({
                         "download",
                         targetFormat === "glb"
                           ? `converted.glb`
-                          : `converted.gltf`
+                          : `converted.gltf`,
                       );
                       document.body.appendChild(link);
                       link.click();

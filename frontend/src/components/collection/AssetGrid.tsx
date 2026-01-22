@@ -4,8 +4,9 @@ import React from "react";
 import { Box, Trash2, Layers } from "lucide-react";
 import { GlowCard } from "@/components/ui/glow-card";
 import { useLanguage } from "@/components/providers/LanguageProvider";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Asset } from "@/lib/store";
+
+import { SharePopover } from "@/components/features/share/SharePopover";
 
 interface AssetGridProps {
   assets: Asset[];
@@ -14,7 +15,12 @@ interface AssetGridProps {
   onDelete: (id: string, e: React.MouseEvent) => void;
 }
 
-export function AssetGrid({ assets, loading, onAssetClick, onDelete }: AssetGridProps) {
+export function AssetGrid({
+  assets,
+  loading,
+  onAssetClick,
+  onDelete,
+}: AssetGridProps) {
   const { t } = useLanguage();
 
   return (
@@ -57,12 +63,17 @@ export function AssetGrid({ assets, loading, onAssetClick, onDelete }: AssetGrid
                 {asset.timestamp}
               </p>
             </div>
-            <button
-              onClick={(e) => onDelete(asset.id, e)}
-              className="p-3 text-slate-200 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
-            >
-              <Trash2 size={18} />
-            </button>
+            <div className="flex gap-2">
+              <div onClick={(e) => e.stopPropagation()}>
+                <SharePopover assetId={asset.id} assetName={asset.name} />
+              </div>
+              <button
+                onClick={(e) => onDelete(asset.id, e)}
+                className="p-3 text-slate-200 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           </div>
         </GlowCard>
       ))}

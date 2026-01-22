@@ -65,6 +65,23 @@
     "unitedStates": "アメリカ合衆国",
     "japanese": "日本語"
   },
+  "share": {
+    "title": "Share Management",
+    "subtitle": "共有リンクの管理・ステータス確認",
+    "object": "オブジェクト",
+    "views": "アクセス数",
+    "expires": "有効期限",
+    "link": "共有リンク",
+    "created": "作成日",
+    "actions": "操作",
+    "copySuccess": "リンクをコピーしました",
+    "deleteConfirm": "共有リンクを削除しますか？",
+    "deleteSuccess": "削除しました",
+    "deleteError": "削除に失敗しました",
+    "loading": "読み込み中...",
+    "noLinks": "共有リンクはありません",
+    "unknown": "不明"
+  },
   "viewer": {
     "wireframe": "WIREFRAME",
     "grid": "GRID",

@@ -12,6 +12,7 @@ import { ConversionModule } from './modules/conversion/conversion.module';
 import { HistoryModule } from './modules/history/history.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { LibraryModule } from './modules/library/library.module';
+import { SharesModule } from './modules/shares/shares.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { LibraryModule } from './modules/library/library.module';
     HistoryModule,
     SettingsModule,
     LibraryModule,
+    SharesModule,
   ],
   controllers: [AppController],
 })

@@ -24,6 +24,7 @@ model User {
   assets         Asset[]
   recentHistory  RecentHistory[]
   conversionJobs ConversionJob[]
+  shareLinks     ShareLink[]
 
   @@index([email], name: "idx_users_email")
   @@map("users")
@@ -44,6 +45,7 @@ model Asset {
   user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   recentHistory RecentHistory[]
   conversionJobs ConversionJob[]
+  shareLinks     ShareLink[]
 
   @@index([userId], name: "idx_assets_user_id")
   @@index([type], name: "idx_assets_type")
@@ -106,4 +108,26 @@ model ConversionJob {
   @@index([status], name: "idx_conversion_status")
   @@index([createdAt(sort: Desc)], name: "idx_conversion_created_at")
   @@map("conversion_jobs")
+}
+
+// 共有リンクテーブル
+model ShareLink {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  assetId        String    @map("asset_id") @db.Uuid
+  shareId        String    @unique @map("share_id") @db.VarChar(12)
+  password       String?   @db.VarChar(255)    // bcrypt ハッシュ
+  expiresAt      DateTime? @map("expires_at")
+  maxViews       Int?      @map("max_views")
+  viewCount      Int       @default(0) @map("view_count")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "idx_share_links_user_id")
+  @@index([shareId], name: "idx_share_links_share_id")
+  @@index([expiresAt], name: "idx_share_links_expires_at")
+  @@map("share_links")
 }

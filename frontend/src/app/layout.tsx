@@ -34,6 +34,7 @@ import { AccountButton } from "@/components/layout/AccountButton";
 import { LanguageProvider } from "@/components/providers/LanguageProvider";
 
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -50,6 +51,7 @@ export default function RootLayout({
             <MainHeader />
             <AccountButton />
             {children}
+            <Toaster />
           </LanguageProvider>
         </AuthProvider>
       </body>
