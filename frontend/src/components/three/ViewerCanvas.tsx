@@ -17,9 +17,14 @@ interface ViewerSettings {
 interface ViewerCanvasProps {
   asset: Asset;
   settings: ViewerSettings;
+  isPublic?: boolean;
 }
 
-export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
+export function ViewerCanvas({
+  asset,
+  settings,
+  isPublic = false,
+}: ViewerCanvasProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -44,7 +49,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
       0,
       size / 2,
       size / 2,
-      size / 2
+      size / 2,
     );
     g.addColorStop(0, "#ffffff");
     g.addColorStop(1, "#f3f4f6");
@@ -67,7 +72,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
       40,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000
+      1000,
     );
     camera.position.set(4.4, 3.5, 4.4);
     cameraRef.current = camera;
@@ -104,7 +109,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
         transparent: true,
         opacity: 0.9,
         side: THREE.DoubleSide,
-      })
+      }),
     );
     pedestal.position.y = -0.05;
     pedestal.receiveShadow = true;
@@ -189,7 +194,8 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
           // Use authenticated fetch
           const token = localStorage.getItem("token");
           const response = await fetch(asset.url, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            headers:
+              token && !isPublic ? { Authorization: `Bearer ${token}` } : {},
           });
           if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
           const blob = await response.blob();
@@ -200,7 +206,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
 
         if (asset.type === "obj") {
           // OBJファイルと同じディレクトリのMTLファイルを探す
-          const objPath = objectUrl || (asset.url || "");
+          const objPath = objectUrl || asset.url || "";
           const objDir = objPath.substring(0, objPath.lastIndexOf("/") + 1);
           const objFileName = objPath.substring(objPath.lastIndexOf("/") + 1);
           const mtlFileName = objFileName.replace(/\.obj$/i, ".mtl");
@@ -216,7 +222,10 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
 
               const token = localStorage.getItem("token");
               const mtlResponse = await fetch(mtlPath, {
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                headers:
+                  token && !isPublic
+                    ? { Authorization: `Bearer ${token}` }
+                    : {},
               });
 
               if (mtlResponse.ok) {
@@ -265,7 +274,7 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
                 console.log("GLB Loaded", gltf);
                 handleModel(gltf);
               },
-              (err) => console.error("GLB Load Error", err)
+              (err) => console.error("GLB Load Error", err),
             );
           }
         }
@@ -291,9 +300,9 @@ export function ViewerCanvas({ asset, settings }: ViewerCanvasProps) {
         mount.removeChild(renderer.domElement);
       }
       if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current);
-
     };
-  }, [asset]); // Re-init on asset change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asset, isPublic]); // Re-init on asset or isPublic change
 
   // Update settings without re-init
   useEffect(() => {

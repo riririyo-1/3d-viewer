@@ -2,7 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Layers, ChevronRight } from "lucide-react";
+import {
+  Sparkles,
+  Layers,
+  ChevronRight,
+  Share2,
+  RefreshCw,
+} from "lucide-react";
 import { useLanguage } from "@/components/providers/LanguageProvider";
 import { Badge } from "@/components/ui/badge";
 import { GlowCard } from "@/components/ui/glow-card";
@@ -19,7 +25,7 @@ export default function Home() {
         <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-slate-200/20 rounded-full blur-[100px] animate-blob animation-delay-4000" />
       </div>
 
-      <div className="relative z-10 max-w-4xl w-full text-center">
+      <div className="relative z-10 max-w-6xl w-full text-center">
         <div className="mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out text-center flex flex-col items-center">
           <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 mb-8 leading-[0.95]">
             {t("home.title1")}
@@ -40,56 +46,85 @@ export default function Home() {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300 ease-out pb-24">
-          <GlowCard asChild className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-2xl active:scale-95 text-center flex flex-col items-center">
-            <Link
-              href="/collection"
-            >
-            <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 transition-all duration-700 shadow-2xl shadow-slate-900/30">
-                <Layers size={36} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300 ease-out pb-24">
+          <GlowCard
+            asChild
+            className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-2xl active:scale-95 text-center flex flex-col items-center"
+          >
+            <Link href="/collection">
+              <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 transition-all duration-700 shadow-2xl shadow-slate-900/30">
+                  <Layers size={36} />
+                </div>
+                <h3 className="text-xl font-black mb-3 tracking-tight uppercase italic">
+                  {t("home.myCollection")}
+                </h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
+                  {t("home.personalAssetLibrary")}
+                </p>
+                <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                  {t("home.exploreCollection")}{" "}
+                  <ChevronRight
+                    size={14}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </div>
               </div>
-              <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic">
-                {t("home.myCollection")}
-              </h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
-                {t("home.personalAssetLibrary")}
-              </p>
-              <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                {t("home.exploreCollection")}{" "}
-                <ChevronRight
-                  size={14}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-            </div>
             </Link>
           </GlowCard>
 
-          <GlowCard asChild className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-xl active:scale-95 text-center flex flex-col items-center">
-            <Link
-              href="/conversion"
-            >
-            <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
-              <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center text-indigo-400 mb-8 font-bold text-3xl transition-all duration-700">
-                🔄
+          <GlowCard
+            asChild
+            className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-xl active:scale-95 text-center flex flex-col items-center"
+          >
+            <Link href="/conversion">
+              <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 transition-all duration-700 shadow-2xl shadow-slate-900/30">
+                  <RefreshCw size={36} />
+                </div>
+                <h3 className="text-xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
+                  {t("home.conversion") || "Conversion"}
+                </h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
+                  {t("home.formatConverter") || "OBJ → GLB/GLTF"}
+                </p>
+                <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                  START
+                  <ChevronRight
+                    size={14}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </div>
               </div>
-              <h3 className="text-2xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
-                {t("home.conversion") || "Conversion"}
-              </h3>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
-                {t("home.formatConverter") || "OBJ → GLB/GLTF"}
-              </p>
-              <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                START
-                <ChevronRight
-                  size={14}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
+            </Link>
+          </GlowCard>
+
+          <GlowCard
+            asChild
+            className="p-1 bg-gradient-to-b from-white to-slate-100 shadow-xl active:scale-95 text-center flex flex-col items-center"
+          >
+            <Link href="/share">
+              <div className="bg-white rounded-xl p-10 h-full flex flex-col items-center text-center overflow-hidden relative w-full">
+                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="w-20 h-20 bg-slate-900 rounded-2xl flex items-center justify-center text-white mb-8 transition-all duration-700 shadow-2xl shadow-slate-900/30">
+                  <Share2 size={36} />
+                </div>
+                <h3 className="text-xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
+                  Share Management
+                </h3>
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
+                  Manage your public links
+                </p>
+                <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                  OPEN
+                  <ChevronRight
+                    size={14}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </div>
               </div>
-            </div>
             </Link>
           </GlowCard>
         </div>

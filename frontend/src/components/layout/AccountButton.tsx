@@ -31,11 +31,12 @@ export function AccountButton() {
         <div className="flex flex-col items-end text-center">
           <button
             onClick={toggleAccount}
+            data-testid="account-button"
             className={cn(
               "pointer-events-auto w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl shadow-slate-200/20 border border-slate-200/50",
               isAccountOpen
                 ? "bg-slate-900 text-white shadow-slate-900/20 scale-105"
-                : "bg-white/70 backdrop-blur-2xl text-slate-600 hover:bg-white/90 hover:scale-105"
+                : "bg-white/70 backdrop-blur-2xl text-slate-600 hover:bg-white/90 hover:scale-105",
             )}
           >
             <User size={20} />
@@ -46,7 +47,7 @@ export function AccountButton() {
               "pointer-events-auto mt-4 w-48 bg-white/90 backdrop-blur-2xl rounded-[1.25rem] border border-slate-200 shadow-2xl transition-all duration-500 origin-bottom-right md:origin-top-right overflow-hidden mb-4 md:mb-0",
               isAccountOpen
                 ? "opacity-100 scale-100 translate-y-0"
-                : "opacity-0 scale-95 translate-y-4 md:-translate-y-4 pointer-events-none"
+                : "opacity-0 scale-95 translate-y-4 md:-translate-y-4 pointer-events-none",
             )}
           >
             <div className="p-4 border-b border-slate-100 bg-slate-50/30 flex flex-col items-center">
@@ -133,11 +134,12 @@ export function AccountButton() {
       <div className="flex flex-col items-end text-center">
         <button
           onClick={toggleAccount}
+          data-testid="account-button"
           className={cn(
             "pointer-events-auto w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl shadow-slate-200/20 border border-slate-200/50 overflow-hidden",
             isAccountOpen
               ? "bg-slate-900 text-white shadow-slate-900/20 scale-105"
-              : "bg-white/70 backdrop-blur-2xl text-slate-600 hover:bg-white/90 hover:scale-105"
+              : "bg-white/70 backdrop-blur-2xl text-slate-600 hover:bg-white/90 hover:scale-105",
           )}
         >
           {user.avatarUrl ? (
@@ -157,7 +159,7 @@ export function AccountButton() {
             "pointer-events-auto mt-4 w-48 bg-white/90 backdrop-blur-2xl rounded-[1.25rem] border border-slate-200 shadow-2xl transition-all duration-500 origin-bottom-right md:origin-top-right overflow-hidden mb-4 md:mb-0",
             isAccountOpen
               ? "opacity-100 scale-100 translate-y-0"
-              : "opacity-0 scale-95 translate-y-4 md:-translate-y-4 pointer-events-none"
+              : "opacity-0 scale-95 translate-y-4 md:-translate-y-4 pointer-events-none",
           )}
         >
           <div className="p-4 border-b border-slate-100 bg-slate-50/30 flex flex-col items-center">
@@ -219,6 +221,7 @@ export function AccountButton() {
             <div className="my-1 mx-2 h-px bg-slate-100" />
             <button
               onClick={() => logout()}
+              data-testid="logout-button"
               className="flex items-center gap-2.5 w-full p-2 rounded-lg hover:bg-red-50 group transition-all text-left text-red-500"
             >
               <LogOut

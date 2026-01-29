@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { TabGroup, TabPanel, TabPanels } from "@headlessui/react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/components/providers/LanguageProvider";
@@ -72,7 +73,10 @@ export default function CollectionPage() {
   };
 
   return (
-    <main className="max-w-6xl mx-auto px-4 md:px-6 pt-20 md:pt-24 pb-24 relative z-10 animate-in fade-in duration-700">
+    <PageContainer
+      title={t("collection.title") || "Collection"}
+      subtitle={t("collection.subtitle") || "Manage your 3D assets"}
+    >
       <TabGroup>
         <CollectionHeader onFileUpload={handleFileUpload} />
 
@@ -97,8 +101,10 @@ export default function CollectionPage() {
 
       <LoadingOverlay
         isVisible={loading || uploading}
-        message={uploading ? "Uploading & Converting..." : t("collection.processing")}
+        message={
+          uploading ? "Uploading & Converting..." : t("collection.processing")
+        }
       />
-    </main>
+    </PageContainer>
   );
 }
