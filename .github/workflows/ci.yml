@@ -261,10 +261,6 @@ jobs:
             ${{ runner.os }}-pnpm-store-server-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Security Scan (Audit)
-        run: pnpm audit --audit-level=high || true
-      - name: Lint
-        run: pnpm lint
       - name: Prisma Generate
         run: pnpm exec prisma generate
         env:
@@ -273,6 +269,10 @@ jobs:
         run: pnpm exec prisma validate
         env:
           DATABASE_URL: postgresql://user:password@localhost:5432/studio_view
+      - name: Security Scan (Audit)
+        run: pnpm audit --audit-level=high || true
+      - name: Lint
+        run: pnpm lint
 
   backend-unit-test:
     needs: changes
