@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
   Req,
 } from '@nestjs/common';
 import { SharesService } from './shares.service';

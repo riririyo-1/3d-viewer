@@ -10,7 +10,6 @@ describe('SharesController (e2e)', () => {
   let prisma: PrismaService;
   let jwtService: JwtService;
   let token: string;
-  let userId: string;
   let assetId: string;
 
   beforeAll(async () => {
@@ -41,7 +40,6 @@ describe('SharesController (e2e)', () => {
         storageLimit: 1000000,
       },
     });
-    userId = user.id;
 
     // Generate Token (Mock Login)
     // We can use AuthService, or just sign directly if we know the secret.

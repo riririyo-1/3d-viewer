@@ -1,0 +1,83 @@
+
+> server@0.0.1 lint /Users/Ryo/Projects/3d-viewer/server
+> eslint "{src,apps,libs,test}/**/*.ts" --fix
+
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/auth/auth.controller.ts
+  54:60  warning  Unsafe argument of type `any` assigned to a parameter of type `{ email: string; googleId: string; picture?: string | undefined; }`  @typescript-eslint/no-unsafe-argument
+  54:64  warning  Unsafe member access .user on an `any` value                                                                                        @typescript-eslint/no-unsafe-member-access
+  58:11  warning  Unsafe assignment of an `any` value                                                                                                 @typescript-eslint/no-unsafe-assignment
+  58:22  warning  Unsafe call of a(n) `any` typed value                                                                                               @typescript-eslint/no-unsafe-call
+  58:22  warning  Unsafe call of a(n) `any` typed value                                                                                               @typescript-eslint/no-unsafe-call
+  58:26  warning  Unsafe member access .get on an `any` value                                                                                         @typescript-eslint/no-unsafe-member-access
+  58:38  warning  Unsafe member access .split on an `any` value                                                                                       @typescript-eslint/no-unsafe-member-access
+  58:49  warning  Unsafe member access [0] on an `any` value                                                                                          @typescript-eslint/no-unsafe-member-access
+  61:5   warning  Unsafe call of a(n) `any` typed value                                                                                               @typescript-eslint/no-unsafe-call
+  61:9   warning  Unsafe member access .redirect on an `any` value                                                                                    @typescript-eslint/no-unsafe-member-access
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/auth/auth.module.ts
+  17:7  warning  Async method 'useFactory' has no 'await' expression  @typescript-eslint/require-await
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/auth/guards/google-oauth.guard.ts
+   7:11  warning  Unsafe assignment of an `any` value          @typescript-eslint/no-unsafe-assignment
+  10:11  warning  Unsafe assignment of an `any` value          @typescript-eslint/no-unsafe-assignment
+  10:18  warning  Unsafe call of a(n) `any` typed value        @typescript-eslint/no-unsafe-call
+  10:26  warning  Unsafe member access .get on an `any` value  @typescript-eslint/no-unsafe-member-access
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/auth/strategies/google.strategy.ts
+  17:3   warning  Async method 'validate' has no 'await' expression   @typescript-eslint/require-await
+  23:11  warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+  25:7   warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+  25:21  warning  Unsafe member access [0] on an `any` value          @typescript-eslint/no-unsafe-member-access
+  26:7   warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+  26:23  warning  Unsafe member access .givenName on an `any` value   @typescript-eslint/no-unsafe-member-access
+  27:7   warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+  27:22  warning  Unsafe member access .familyName on an `any` value  @typescript-eslint/no-unsafe-member-access
+  28:7   warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+  28:23  warning  Unsafe member access [0] on an `any` value          @typescript-eslint/no-unsafe-member-access
+  29:7   warning  Unsafe assignment of an `any` value                 @typescript-eslint/no-unsafe-assignment
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/shares/dto/share-response.dto.ts
+  65:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  65:30  warning  Unsafe member access .id on an `any` value            @typescript-eslint/no-unsafe-member-access
+  66:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  66:32  warning  Unsafe member access .name on an `any` value          @typescript-eslint/no-unsafe-member-access
+  67:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  67:32  warning  Unsafe member access .type on an `any` value          @typescript-eslint/no-unsafe-member-access
+  68:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  68:40  warning  Unsafe member access .thumbnailUrl on an `any` value  @typescript-eslint/no-unsafe-member-access
+  69:13  warning  Unsafe assignment of an `any` value                   @typescript-eslint/no-unsafe-assignment
+  69:37  warning  Unsafe member access .createdAt on an `any` value     @typescript-eslint/no-unsafe-member-access
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/shares/shares.controller.ts
+   10:3   error    'Query' is defined but never used                                                   @typescript-eslint/no-unused-vars
+  122:11  warning  Unsafe assignment of an `any` value                                                 @typescript-eslint/no-unsafe-assignment
+  122:27  warning  Unsafe member access .hostname on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+  126:7   warning  Unsafe argument of type `any` assigned to a parameter of type `string | undefined`  @typescript-eslint/no-unsafe-argument
+
+/Users/Ryo/Projects/3d-viewer/server/src/modules/shares/shares.service.ts
+  116:12  warning  Unsafe member access .password on an `any` value   @typescript-eslint/no-unsafe-member-access
+  119:12  warning  Unsafe member access .expiresAt on an `any` value  @typescript-eslint/no-unsafe-member-access
+  124:7   warning  Unsafe assignment of an `any` value                @typescript-eslint/no-unsafe-assignment
+
+/Users/Ryo/Projects/3d-viewer/server/test/e2e/shares.e2e-spec.ts
+   13:7   error    'userId' is assigned a value but never used                          @typescript-eslint/no-unused-vars
+   81:20  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+   91:25  warning  Unsafe member access .shareId on an `any` value                      @typescript-eslint/no-unsafe-member-access
+   92:25  warning  Unsafe member access .assetId on an `any` value                      @typescript-eslint/no-unsafe-member-access
+   99:31  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+  105:21  warning  Unsafe member access .length on an `any` value                       @typescript-eslint/no-unsafe-member-access
+  106:5   warning  Unsafe assignment of an `any` value                                  @typescript-eslint/no-unsafe-assignment
+  106:31  warning  Unsafe member access [0] on an `any` value                           @typescript-eslint/no-unsafe-member-access
+  110:20  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+  122:31  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+  131:11  warning  Unsafe assignment of an `any` value                                  @typescript-eslint/no-unsafe-assignment
+  131:30  warning  Unsafe member access .shareId on an `any` value                      @typescript-eslint/no-unsafe-member-access
+  134:19  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+  141:25  warning  Unsafe member access .valid on an `any` value                        @typescript-eslint/no-unsafe-member-access
+  144:19  warning  Unsafe argument of type `any` assigned to a parameter of type `App`  @typescript-eslint/no-unsafe-argument
+  149:25  warning  Unsafe member access .valid on an `any` value                        @typescript-eslint/no-unsafe-member-access
+
+✖ 59 problems (2 errors, 57 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
