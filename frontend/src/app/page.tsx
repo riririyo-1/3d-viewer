@@ -91,7 +91,7 @@ export default function Home() {
                   {t("home.formatConverter") || "OBJ → GLB/GLTF"}
                 </p>
                 <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                  START
+                  {t("common.start")}
                   <ChevronRight
                     size={14}
                     className="group-hover:translate-x-1 transition-transform"
@@ -112,13 +112,13 @@ export default function Home() {
                   <Share2 size={36} />
                 </div>
                 <h3 className="text-xl font-black mb-3 tracking-tight uppercase italic text-slate-800">
-                  Share Management
+                  {t("home.shareManagement")}
                 </h3>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-8">
-                  Manage your public links
+                  {t("home.managePublicLinks")}
                 </p>
                 <div className="mt-auto flex items-center gap-3 py-2 px-6 rounded-full bg-slate-50 group-hover:bg-slate-900 group-hover:text-white transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]">
-                  OPEN
+                  {t("common.open")}
                   <ChevronRight
                     size={14}
                     className="group-hover:translate-x-1 transition-transform"

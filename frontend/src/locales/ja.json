@@ -11,7 +11,11 @@
     "language": "Language",
     "settings": "Settings",
     "accountProfile": "Account & Profile",
-    "logout": "Log out"
+    "logout": "ログアウト",
+    "copy": "コピー",
+    "delete": "削除",
+    "start": "START",
+    "open": "OPEN"
   },
   "home": {
     "title1": "Visionary",
@@ -25,7 +29,9 @@
     "multiDeviceSync": "マルチデバイス同期",
     "updatePending": "アップデート待機中",
     "conversion": "Conversion",
-    "formatConverter": "OBJ → GLB/GLTF"
+    "formatConverter": "OBJ → GLB/GLTF",
+    "shareManagement": "シェア管理",
+    "managePublicLinks": "公開リンクの管理"
   },
   "conversion": {
     "title": "Conversion",

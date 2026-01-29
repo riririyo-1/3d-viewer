@@ -149,13 +149,13 @@ export function ShareManagementTable() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleCopy(share)}>
-                      <Copy className="mr-2 h-4 w-4" /> コピー
+                      <Copy className="mr-2 h-4 w-4" /> {t("common.copy")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600 focus:text-red-600 focus:bg-red-50"
                       onClick={() => handleDelete(share.id)}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> 削除
+                      <Trash2 className="mr-2 h-4 w-4" /> {t("common.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

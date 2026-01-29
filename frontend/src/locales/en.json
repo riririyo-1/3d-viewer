@@ -11,7 +11,11 @@
     "language": "Language",
     "settings": "Settings",
     "accountProfile": "Account & Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "copy": "Copy",
+    "delete": "Delete",
+    "start": "START",
+    "open": "OPEN"
   },
   "settings": {
     "title": "Settings",
@@ -42,7 +46,9 @@
     "multiDeviceSync": "Multi-Device Sync",
     "updatePending": "Update Pending",
     "conversion": "Conversion",
-    "formatConverter": "OBJ → GLB/GLTF"
+    "formatConverter": "OBJ → GLB/GLTF",
+    "shareManagement": "Share Management",
+    "managePublicLinks": "Manage your public links"
   },
   "conversion": {
     "title": "Conversion",

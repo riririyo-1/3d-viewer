@@ -85,12 +85,13 @@
 ### フロントエンド技術
 
 - **フレームワーク**: Next.js 16.1.0 (App Router)
-- **UI ライブラリ**: React 19.2.3
+- **UI ライブラリ**: React 19.2.3, shadcn/ui
 - **言語**: TypeScript 5.9.3
 - **スタイリング**: Tailwind CSS 4.1.18
 - **3D レンダリング**: Three.js 0.182.0
 - **状態管理**: Zustand 5.0.9
 - **HTTP クライアント**: Axios 1.13.2
+- **ユーティリティ**: React QR Code, Sonner, Date-fns
 
 ### バックエンド技術
 
@@ -100,12 +101,14 @@
 - **認証**: JWT + Passport.js
 - **ジョブキュー**: BullMQ 5.66.4 + Redis 7
 - **ストレージ**: MinIO (S3 互換)
+- **ID生成**: NanoID (共有リンク用)
 
 ### 変換パイプライン技術
 
 - **言語**: Python 3.12
 - **フレームワーク**: FastAPI 0.115
 - **変換ツール**: obj2gltf
+- **パッケージマネージャー**: uv
 
 ### インフラ技術
 
