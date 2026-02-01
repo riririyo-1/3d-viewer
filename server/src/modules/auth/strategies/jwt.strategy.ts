@@ -34,6 +34,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Return user object without sensitive data
-    return { id: user.id, email: user.email, plan: user.plan };
+    return {
+      id: user.id,
+      email: user.email,
+      plan: user.plan,
+      avatarUrl: user.avatarUrl,
+    };
   }
 }

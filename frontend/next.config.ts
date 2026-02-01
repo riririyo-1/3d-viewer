@@ -10,6 +10,14 @@ const withPWA = require("@ducanh2912/next-pwa").default({
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
+  },
   /* config options here */
 };
 
